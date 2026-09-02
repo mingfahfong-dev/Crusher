@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crusher &amp; Mill Test Sheet — v2</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23111111'/%3E%3Cpath d='M14 20 L32 12 L50 20 L44 44 L20 44 Z' fill='none' stroke='%23e07a2b' stroke-width='3'/%3E%3Cpath d='M22 30 L42 30 M25 37 L39 37' stroke='%23e07a2b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0c0c0d;
+    --bg-panel:#151517;
+    --bg-panel-2:#1c1c1f;
+    --line:#2a2a2e;
+    --text:#e8e6e2;
+    --text-dim:#9a9a9e;
+    --orange:#e07a2b;
+    --orange-dim:#8a4d1d;
+    --pass:#4a9b6e;
+    --fail:#c1503f;
+    --input-bg:#0f0f11;
+    --font-ui: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-data: "Consolas", "SF Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-ui);
+    line-height:1.4;
+    padding-bottom:60px;
+  }
+  header{
+    background:var(--bg-panel);
+    border-bottom:2px solid var(--orange);
+    padding:18px 24px 16px;
+  }
+  .title-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  h1{
+    margin:0;
+    font-size:1.4rem;
+    font-weight:600;
+    letter-spacing:0.2px;
+  }
+  h1 span{color:var(--orange);}
+  .subtitle{color:var(--text-dim);font-size:0.85rem;margin-top:2px;}
+  .version-tag{
+    font-family:var(--font-data);
+    font-size:0.75rem;
+    color:var(--orange);
+    border:1px solid var(--orange-dim);
+    padding:2px 8px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  main{max-width:980px;margin:0 auto;padding:20px 20px 0;}
+  .meta-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+    gap:12px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px;
+    margin-bottom:20px;
+  }
+  .field label{
+    display:block;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--text-dim);
+    margin-bottom:4px;
+  }
+  input[type=text], input[type=date], input[type=number], textarea{
+    width:100%;
+    background:var(--input-bg);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:7px 8px;
+    border-radius:4px;
+    font-family:var(--font-data);
+    font-size:0.9rem;
+  }
+  input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--orange);
+  }
+  /* remove native up/down spinner on number cells */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  input[type=number]{
+    -moz-appearance:textfield;
+  }
+  .date-field{
+    display:flex;
+    gap:6px;
+  }
+  .date-field input[type=date]{flex:1;}
+  .today-btn{
+    padding:0 10px;
+    font-size:0.72rem;
+    white-space:nowrap;
+  }
+  section.block{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    margin-bottom:18px;
+    overflow:hidden;
+  }
+  .block-head{
+    background:var(--bg-panel-2);
+    padding:10px 16px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .block-head h2{
+    margin:0;
+    font-size:0.95rem;
+    font-weight:600;
+  }
+  .block-head .threshold{
+    font-family:var(--font-data);
+    font-size:0.75rem;
+    color:var(--orange);
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-family:var(--font-data);
+    font-size:0.85rem;
+  }
+  th, td{
+    padding:8px 10px;
+    border-bottom:1px solid var(--line);
+    text-align:right;
+  }
+  th{
+    text-align:right;
+    color:var(--text-dim);
+    font-weight:500;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+  td.rowlabel, th.rowlabel{
+    text-align:left;
+    font-family:var(--font-ui);
+    color:var(--text);
+    font-size:0.85rem;
+    white-space:nowrap;
+  }
+  td.rowlabel .sym{color:var(--orange-dim);font-family:var(--font-data);margin-left:4px;}
+  tr.computed td{color:var(--text-dim);}
+  tr.computed input{color:var(--text-dim);}
+  td input{
+    width:90px;
+    text-align:right;
+  }
+  .readonly{
+    background:transparent!important;
+    border:1px dashed var(--line)!important;
+    color:var(--text-dim);
+  }
+  .badge{
+    display:inline-block;
+    min-width:52px;
+    text-align:center;
+    padding:3px 8px;
+    border-radius:3px;
+    font-size:0.75rem;
+    font-weight:600;
+    letter-spacing:0.4px;
+  }
+  .badge.pass{background:rgba(74,155,110,0.18);color:var(--pass);border:1px solid var(--pass);}
+  .badge.fail{background:rgba(193,80,63,0.18);color:var(--fail);border:1px solid var(--fail);}
+  .badge.pending{background:transparent;color:var(--text-dim);border:1px solid var(--line);}
+  .comment-row{padding:14px 16px;}
+  .comment-row label{
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--text-dim);
+    display:block;
+    margin-bottom:6px;
+  }
+  .escalate-hint{
+    font-size:0.78rem;
+    color:var(--fail);
+    margin-top:6px;
+    display:none;
+  }
+  .escalate-hint.show{display:block;}
+  .actions-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:20px 0;
+  }
+  button{
+    font-family:var(--font-ui);
+    font-size:0.85rem;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:5px;
+    border:1px solid var(--line);
+    background:var(--bg-panel-2);
+    color:var(--text);
+    cursor:pointer;
+    transition:border-color 0.15s, color 0.15s;
+  }
+  button:hover{border-color:var(--orange);color:var(--orange);}
+  button.primary{
+    background:var(--orange);
+    border-color:var(--orange);
+    color:#161616;
+  }
+  button.primary:hover{
+    background:#f08b3c;
+    color:#161616;
+  }
+  button.ghost{background:transparent;}
+  .retest-toggle-wrap{margin:4px 0 18px;}
+  #retestSection{display:none;}
+  #retestSection.show{display:block;}
+  .close-retest{float:right;}
+  table.log{font-size:0.78rem;}
+  table.log th, table.log td{padding:6px 8px;text-align:left;}
+  table.log td.num{text-align:right;}
+  .log-wrap{overflow-x:auto;}
+  .empty-log{color:var(--text-dim);font-size:0.85rem;padding:16px;text-align:center;}
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:0.75rem;
+    padding:24px 0 10px;
+  }
+  footer .v{color:var(--orange);}
+  .toast{
+    position:fixed;
+    bottom:22px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--bg-panel-2);
+    border:1px solid var(--orange);
+    color:var(--text);
+    padding:10px 18px;
+    border-radius:6px;
+    font-size:0.85rem;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s, transform 0.2s;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media (max-width:640px){
+    td input{width:64px;font-size:0.8rem;}
+    th, td{padding:6px 5px;font-size:0.75rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <div>
+      <h1>Crusher <span>&amp;</span> Mill Test Sheet</h1>
+      <div class="subtitle">PMLB — Sample sizing verification (2mm crush / 100µm mill)</div>
+    </div>
+    <div class="version-tag">v2</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="meta-grid">
+    <div class="field">
+      <label for="workOrder">Work Order Number</label>
+      <input type="text" id="workOrder" placeholder="WO-#####">
+    </div>
+    <div class="field">
+      <label for="testDate">Date</label>
+      <div class="date-field">
+        <input type="date" id="testDate">
+        <button type="button" class="ghost today-btn" data-today-for="testDate">Today</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="performedBy">Performed By</label>
+      <input type="text" id="performedBy" placeholder="Name">
+    </div>
+    <div class="field" style="display:flex;align-items:flex-end;">
+      <span style="color:var(--text-dim);font-size:0.78rem;">Complete and scan into SAP Notification</span>
+    </div>
+  </div>
+
+  <!-- CRUSHER TEST -->
+  <section class="block">
+    <div class="block-head">
+      <h2>Crusher Test Results</h2>
+      <span class="threshold">95% passing 2mm</span>
+    </div>
+    <table id="crusherTable">
+      <thead>
+        <tr>
+          <th class="rowlabel"></th>
+          <th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rowlabel">Starting Weight<span class="sym">A</span></td>
+          <td><input type="number" step="any" class="c-A" data-col="0"></td>
+          <td><input type="number" step="any" class="c-A" data-col="1"></td>
+          <td><input type="number" step="any" class="c-A" data-col="2"></td>
+          <td><input type="number" step="any" class="c-A" data-col="3"></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">+2mm Product Weight<span class="sym">B</span></td>
+          <td><input type="number" step="any" class="c-B" data-col="0"></td>
+          <td><input type="number" step="any" class="c-B" data-col="1"></td>
+          <td><input type="number" step="any" class="c-B" data-col="2"></td>
+          <td><input type="number" step="any" class="c-B" data-col="3"></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">Pan Product Weight<span class="sym">C</span></td>
+          <td><input type="number" step="any" class="c-C" data-col="0"></td>
+          <td><input type="number" step="any" class="c-C" data-col="1"></td>
+          <td><input type="number" step="any" class="c-C" data-col="2"></td>
+          <td><input type="number" step="any" class="c-C" data-col="3"></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">Final Product Weight (B+C)<span class="sym">D</span></td>
+          <td><input class="readonly c-D" data-col="0" readonly></td>
+          <td><input class="readonly c-D" data-col="1" readonly></td>
+          <td><input class="readonly c-D" data-col="2" readonly></td>
+          <td><input class="readonly c-D" data-col="3" readonly></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">Retention Wt % +2mm (B/D)×100</td>
+          <td><input class="readonly c-ret" data-col="0" readonly></td>
+          <td><input class="readonly c-ret" data-col="1" readonly></td>
+          <td><input class="readonly c-ret" data-col="2" readonly></td>
+          <td><input class="readonly c-ret" data-col="3" readonly></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">Passing Rate % −2mm (C/D)×100</td>
+          <td><input class="readonly c-pass" data-col="0" readonly></td>
+          <td><input class="readonly c-pass" data-col="1" readonly></td>
+          <td><input class="readonly c-pass" data-col="2" readonly></td>
+          <td><input class="readonly c-pass" data-col="3" readonly></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">Passing rate &gt; 95%?</td>
+          <td><span class="badge pending c-badge" data-col="0">—</span></td>
+          <td><span class="badge pending c-badge" data-col="1">—</span></td>
+          <td><span class="badge pending c-badge" data-col="2">—</span></td>
+          <td><span class="badge pending c-badge" data-col="3">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- MILL TEST -->
+  <section class="block">
+    <div class="block-head">
+      <h2>Mill Test Results</h2>
+      <span class="threshold">95% passing 100µm</span>
+    </div>
+    <table id="millTable">
+      <thead>
+        <tr>
+          <th class="rowlabel"></th>
+          <th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rowlabel">Starting Milled Weight<span class="sym">E</span></td>
+          <td><input type="number" step="any" class="m-E" data-col="0"></td>
+          <td><input type="number" step="any" class="m-E" data-col="1"></td>
+          <td><input type="number" step="any" class="m-E" data-col="2"></td>
+          <td><input type="number" step="any" class="m-E" data-col="3"></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">Tray Weight<span class="sym">F</span></td>
+          <td><input type="number" step="any" class="m-F" data-col="0"></td>
+          <td><input type="number" step="any" class="m-F" data-col="1"></td>
+          <td><input type="number" step="any" class="m-F" data-col="2"></td>
+          <td><input type="number" step="any" class="m-F" data-col="3"></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">Dry Weight<span class="sym">G</span></td>
+          <td><input type="number" step="any" class="m-G" data-col="0"></td>
+          <td><input type="number" step="any" class="m-G" data-col="1"></td>
+          <td><input type="number" step="any" class="m-G" data-col="2"></td>
+          <td><input type="number" step="any" class="m-G" data-col="3"></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">+100µm Weight (G−F)<span class="sym">H</span></td>
+          <td><input class="readonly m-H" data-col="0" readonly></td>
+          <td><input class="readonly m-H" data-col="1" readonly></td>
+          <td><input class="readonly m-H" data-col="2" readonly></td>
+          <td><input class="readonly m-H" data-col="3" readonly></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">Retention Wt % −100µm (H/E)×100<span class="sym">I</span></td>
+          <td><input class="readonly m-ret" data-col="0" readonly></td>
+          <td><input class="readonly m-ret" data-col="1" readonly></td>
+          <td><input class="readonly m-ret" data-col="2" readonly></td>
+          <td><input class="readonly m-ret" data-col="3" readonly></td>
+        </tr>
+        <tr class="computed">
+          <td class="rowlabel">Passing Rate % −100µm (100−I)</td>
+          <td><input class="readonly m-pass" data-col="0" readonly></td>
+          <td><input class="readonly m-pass" data-col="1" readonly></td>
+          <td><input class="readonly m-pass" data-col="2" readonly></td>
+          <td><input class="readonly m-pass" data-col="3" readonly></td>
+        </tr>
+        <tr>
+          <td class="rowlabel">Passing rate &gt; 95%?</td>
+          <td><span class="badge pending m-badge" data-col="0">—</span></td>
+          <td><span class="badge pending m-badge" data-col="1">—</span></td>
+          <td><span class="badge pending m-badge" data-col="2">—</span></td>
+          <td><span class="badge pending m-badge" data-col="3">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <div class="comment-row">
+      <label for="comments">Comments</label>
+      <textarea id="comments" rows="2" placeholder="Notes for this test..."></textarea>
+      <div class="escalate-hint" id="escalateHint">⚠ One or more results failed — escalate to a Senior Analyst.</div>
+    </div>
+  </section>
+
+  <div class="retest-toggle-wrap">
+    <button id="toggleRetest" class="ghost">+ Add Retest (after adjustment)</button>
+  </div>
+
+  <div id="retestSection">
+    <section class="block">
+      <div class="block-head">
+        <h2>Retest — after adjustment</h2>
+        <button class="close-retest ghost" id="closeRetest" style="padding:4px 10px;font-size:0.75rem;">Remove retest</button>
+      </div>
+      <div class="meta-grid" style="border:none;border-radius:0;border-bottom:1px solid var(--line);margin-bottom:0;">
+        <div class="field">
+          <label for="retestDate">Date</label>
+          <div class="date-field">
+            <input type="date" id="retestDate">
+            <button type="button" class="ghost today-btn" data-today-for="retestDate">Today</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="retestBy">Performed By</label>
+          <input type="text" id="retestBy" placeholder="Name">
+        </div>
+        <div class="field">
+          <label for="turnAdjusted">Turns Adjusted</label>
+          <input type="number" step="any" id="turnAdjusted" placeholder="e.g. +2 or -1.5">
+        </div>
+        <div class="field">
+          <label for="newCrusherGap">New Crusher Gap (mm)</label>
+          <input type="number" step="any" id="newCrusherGap" placeholder="mm">
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>Crusher Test Results (Retest)</h2>
+        <span class="threshold">95% passing 2mm</span>
+      </div>
+      <table id="crusherTableR">
+        <thead>
+          <tr><th class="rowlabel"></th><th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowlabel">Starting Weight<span class="sym">A</span></td>
+            <td><input type="number" step="any" class="rc-A" data-col="0"></td>
+            <td><input type="number" step="any" class="rc-A" data-col="1"></td>
+            <td><input type="number" step="any" class="rc-A" data-col="2"></td>
+            <td><input type="number" step="any" class="rc-A" data-col="3"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">+2mm Product Weight<span class="sym">B</span></td>
+            <td><input type="number" step="any" class="rc-B" data-col="0"></td>
+            <td><input type="number" step="any" class="rc-B" data-col="1"></td>
+            <td><input type="number" step="any" class="rc-B" data-col="2"></td>
+            <td><input type="number" step="any" class="rc-B" data-col="3"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">Pan Product Weight<span class="sym">C</span></td>
+            <td><input type="number" step="any" class="rc-C" data-col="0"></td>
+            <td><input type="number" step="any" class="rc-C" data-col="1"></td>
+            <td><input type="number" step="any" class="rc-C" data-col="2"></td>
+            <td><input type="number" step="any" class="rc-C" data-col="3"></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">Final Product Weight (B+C)<span class="sym">D</span></td>
+            <td><input class="readonly rc-D" data-col="0" readonly></td>
+            <td><input class="readonly rc-D" data-col="1" readonly></td>
+            <td><input class="readonly rc-D" data-col="2" readonly></td>
+            <td><input class="readonly rc-D" data-col="3" readonly></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">Retention Wt % +2mm (B/D)×100</td>
+            <td><input class="readonly rc-ret" data-col="0" readonly></td>
+            <td><input class="readonly rc-ret" data-col="1" readonly></td>
+            <td><input class="readonly rc-ret" data-col="2" readonly></td>
+            <td><input class="readonly rc-ret" data-col="3" readonly></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">Passing Rate % −2mm (C/D)×100</td>
+            <td><input class="readonly rc-pass" data-col="0" readonly></td>
+            <td><input class="readonly rc-pass" data-col="1" readonly></td>
+            <td><input class="readonly rc-pass" data-col="2" readonly></td>
+            <td><input class="readonly rc-pass" data-col="3" readonly></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">Passing rate &gt; 95%?</td>
+            <td><span class="badge pending rc-badge" data-col="0">—</span></td>
+            <td><span class="badge pending rc-badge" data-col="1">—</span></td>
+            <td><span class="badge pending rc-badge" data-col="2">—</span></td>
+            <td><span class="badge pending rc-badge" data-col="3">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2>Mill Test Results (Retest)</h2>
+        <span class="threshold">95% passing 100µm</span>
+      </div>
+      <table id="millTableR">
+        <thead>
+          <tr><th class="rowlabel"></th><th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowlabel">Starting Milled Weight<span class="sym">E</span></td>
+            <td><input type="number" step="any" class="rm-E" data-col="0"></td>
+            <td><input type="number" step="any" class="rm-E" data-col="1"></td>
+            <td><input type="number" step="any" class="rm-E" data-col="2"></td>
+            <td><input type="number" step="any" class="rm-E" data-col="3"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">Tray Weight<span class="sym">F</span></td>
+            <td><input type="number" step="any" class="rm-F" data-col="0"></td>
+            <td><input type="number" step="any" class="rm-F" data-col="1"></td>
+            <td><input type="number" step="any" class="rm-F" data-col="2"></td>
+            <td><input type="number" step="any" class="rm-F" data-col="3"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">Dry Weight<span class="sym">G</span></td>
+            <td><input type="number" step="any" class="rm-G" data-col="0"></td>
+            <td><input type="number" step="any" class="rm-G" data-col="1"></td>
+            <td><input type="number" step="any" class="rm-G" data-col="2"></td>
+            <td><input type="number" step="any" class="rm-G" data-col="3"></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">+100µm Weight (G−F)<span class="sym">H</span></td>
+            <td><input class="readonly rm-H" data-col="0" readonly></td>
+            <td><input class="readonly rm-H" data-col="1" readonly></td>
+            <td><input class="readonly rm-H" data-col="2" readonly></td>
+            <td><input class="readonly rm-H" data-col="3" readonly></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">Retention Wt % −100µm (H/E)×100<span class="sym">I</span></td>
+            <td><input class="readonly rm-ret" data-col="0" readonly></td>
+            <td><input class="readonly rm-ret" data-col="1" readonly></td>
+            <td><input class="readonly rm-ret" data-col="2" readonly></td>
+            <td><input class="readonly rm-ret" data-col="3" readonly></td>
+          </tr>
+          <tr class="computed">
+            <td class="rowlabel">Passing Rate % −100µm (100−I)</td>
+            <td><input class="readonly rm-pass" data-col="0" readonly></td>
+            <td><input class="readonly rm-pass" data-col="1" readonly></td>
+            <td><input class="readonly rm-pass" data-col="2" readonly></td>
+            <td><input class="readonly rm-pass" data-col="3" readonly></td>
+          </tr>
+          <tr>
+            <td class="rowlabel">Passing rate &gt; 95%?</td>
+            <td><span class="badge pending rm-badge" data-col="0">—</span></td>
+            <td><span class="badge pending rm-badge" data-col="1">—</span></td>
+            <td><span class="badge pending rm-badge" data-col="2">—</span></td>
+            <td><span class="badge pending rm-badge" data-col="3">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div class="actions-row">
+    <button class="primary" id="saveBtn">Save to log</button>
+    <button class="ghost" id="newBtn">New / Clear form</button>
+    <button class="ghost" id="loadLastBtn">Load last saved</button>
+  </div>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Saved Test Log</h2>
+      <button class="ghost" id="exportCsvBtn" style="padding:4px 10px;font-size:0.75rem;">Export CSV</button>
+    </div>
+    <div class="log-wrap">
+      <table class="log" id="logTable">
+        <thead>
+          <tr>
+            <th>Work Order</th><th>Date</th><th>Performed By</th>
+            <th>Crusher</th><th>Mill</th><th>Retest</th><th>Overall</th><th>Saved</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+      <div class="empty-log" id="emptyLog">No saved tests yet — fill in the form above and click "Save to log".</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Crusher &amp; Mill Test Sheet Tool <span class="v">v2</span> — PMLB internal tool. Data is stored locally in this browser only.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const SAMPLES = ['col0','col1','col2','col3'];
+  const STORAGE_KEY = 'pmlb_crusher_mill_log_v1';
+
+  function fmtNum(v, digits){
+    if (v === null || v === undefined || isNaN(v)) return '';
+    return v.toFixed(digits);
+  }
+
+  function getVals(prefix){
+    // returns array of 4 numbers or null per column for a given input class prefix
+    return SAMPLES.map((_, i) => {
+      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
+      if (!el) return null;
+      const v = parseFloat(el.value);
+      return isNaN(v) ? null : v;
+    });
+  }
+
+  function setReadonly(prefix, values, digits){
+    values.forEach((v, i) => {
+      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
+      if (el) el.value = fmtNum(v, digits);
+    });
+  }
+
+  function setBadges(prefix, passRates){
+    passRates.forEach((v, i) => {
+      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
+      if (!el) return;
+      el.classList.remove('pass','fail','pending');
+      if (v === null) { el.classList.add('pending'); el.textContent = '—'; }
+      else if (v > 95) { el.classList.add('pass'); el.textContent = 'PASS'; }
+      else { el.classList.add('fail'); el.textContent = 'FAIL'; }
+    });
+  }
+
+  // ---- Crusher block calculation (used for main + retest via prefix map) ----
+  function calcCrusher(pfx){
+    // pfx = 'c' or 'rc'
+    const A = getVals(`${pfx}-A`);
+    const B = getVals(`${pfx}-B`);
+    const C = getVals(`${pfx}-C`);
+    const D = B.map((b,i) => (b===null || C[i]===null) ? null : b + C[i]);
+    const ret = D.map((d,i) => (d===null || d===0 || B[i]===null) ? null : (B[i]/d)*100);
+    const pass = D.map((d,i) => (d===null || d===0 || C[i]===null) ? null : (C[i]/d)*100);
+    setReadonly(`${pfx}-D`, D, 2);
+    setReadonly(`${pfx}-ret`, ret, 2);
+    setReadonly(`${pfx}-pass`, pass, 2);
+    setBadges(`${pfx}-badge`, pass);
+    return {A,B,C,D,ret,pass};
+  }
+
+  function calcMill(pfx){
+    // pfx = 'm' or 'rm'
+    const E = getVals(`${pfx}-E`);
+    const F = getVals(`${pfx}-F`);
+    const G = getVals(`${pfx}-G`);
+    const H = G.map((g,i) => (g===null || F[i]===null) ? null : g - F[i]);
+    const ret = H.map((h,i) => (h===null || E[i]===null || E[i]===0) ? null : (h/E[i])*100);
+    const pass = ret.map(r => r===null ? null : 100 - r);
+    setReadonly(`${pfx}-H`, H, 4);
+    setReadonly(`${pfx}-ret`, ret, 3);
+    setReadonly(`${pfx}-pass`, pass, 3);
+    setBadges(`${pfx}-badge`, pass);
+    return {E,F,G,H,ret,pass};
+  }
+
+  let lastCrusher, lastMill, lastCrusherR, lastMillR;
+
+  function recalcAll(){
+    lastCrusher = calcCrusher('c');
+    lastMill = calcMill('m');
+    lastCrusherR = calcCrusher('rc');
+    lastMillR = calcMill('rm');
+    updateEscalation();
+  }
+
+  function anyFail(passArr){
+    return passArr.some(v => v !== null && v <= 95);
+  }
+
+  function updateEscalation(){
+    const retestOpen = document.getElementById('retestSection').classList.contains('show');
+    let fail = anyFail(lastCrusher.pass) || anyFail(lastMill.pass);
+    if (retestOpen) fail = fail || anyFail(lastCrusherR.pass) || anyFail(lastMillR.pass);
+    document.getElementById('escalateHint').classList.toggle('show', fail);
+  }
+
+  document.querySelectorAll('input[type=number]').forEach(el => {
+    el.addEventListener('input', recalcAll);
+  });
+
+  // ---- Today buttons ----
+  function todayStr(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  document.querySelectorAll('.today-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-today-for');
+      document.getElementById(targetId).value = todayStr();
+    });
+  });
+
+  // ---- Retest toggle ----
+  const retestSection = document.getElementById('retestSection');
+  document.getElementById('toggleRetest').addEventListener('click', () => {
+    retestSection.classList.add('show');
+    document.getElementById('toggleRetest').style.display = 'none';
+    updateEscalation();
+  });
+  document.getElementById('closeRetest').addEventListener('click', () => {
+    if (!confirm('Remove the retest section? Entered retest values will be cleared.')) return;
+    document.querySelectorAll('#retestSection input').forEach(el => el.value = '');
+    retestSection.classList.remove('show');
+    document.getElementById('toggleRetest').style.display = 'inline-block';
+    recalcAll();
+  });
+
+  // ---- Toast ----
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ---- Save / New ----
+  function overallResult(includeRetest){
+    let fail = anyFail(lastCrusher.pass) || anyFail(lastMill.pass);
+    if (includeRetest) fail = fail || anyFail(lastCrusherR.pass) || anyFail(lastMillR.pass);
+    const anyData = lastCrusher.pass.some(v=>v!==null) || lastMill.pass.some(v=>v!==null);
+    if (!anyData) return 'PENDING';
+    return fail ? 'FAIL' : 'PASS';
+  }
+
+  function collectRecord(){
+    const retestOpen = retestSection.classList.contains('show');
+    return {
+      workOrder: document.getElementById('workOrder').value,
+      date: document.getElementById('testDate').value,
+      performedBy: document.getElementById('performedBy').value,
+      comments: document.getElementById('comments').value,
+      crusher: lastCrusher,
+      mill: lastMill,
+      hasRetest: retestOpen,
+      retestDate: document.getElementById('retestDate').value,
+      retestBy: document.getElementById('retestBy').value,
+      turnAdjusted: document.getElementById('turnAdjusted').value,
+      newCrusherGap: document.getElementById('newCrusherGap').value,
+      crusherR: retestOpen ? lastCrusherR : null,
+      millR: retestOpen ? lastMillR : null,
+      overall: overallResult(retestOpen),
+      savedAt: new Date().toISOString()
+    };
+  }
+
+  function loadLog(){
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch(e){ return []; }
+  }
+  function saveLogArr(arr){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  function renderLog(){
+    const log = loadLog();
+    const body = document.getElementById('logBody');
+    const empty = document.getElementById('emptyLog');
+    body.innerHTML = '';
+    if (log.length === 0){
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    log.slice().reverse().forEach((rec, revIdx) => {
+      const idx = log.length - 1 - revIdx;
+      const tr = document.createElement('tr');
+      const crusherOverall = anyFail(rec.crusher.pass) ? 'FAIL' : (rec.crusher.pass.some(v=>v!==null) ? 'PASS' : '—');
+      const millOverall = anyFail(rec.mill.pass) ? 'FAIL' : (rec.mill.pass.some(v=>v!==null) ? 'PASS' : '—');
+      const savedDate = new Date(rec.savedAt);
+      tr.innerHTML = `
+        <td>${rec.workOrder || '—'}</td>
+        <td>${rec.date || '—'}</td>
+        <td>${rec.performedBy || '—'}</td>
+        <td>${crusherOverall}</td>
+        <td>${millOverall}</td>
+        <td>${rec.hasRetest ? 'Yes' : 'No'}</td>
+        <td><span class="badge ${rec.overall==='PASS'?'pass':(rec.overall==='FAIL'?'fail':'pending')}">${rec.overall}</span></td>
+        <td>${savedDate.toLocaleDateString()} ${savedDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td>
+        <td><button class="ghost" style="padding:3px 8px;font-size:0.72rem;" data-del="${idx}">Delete</button></td>
+      `;
+      body.appendChild(tr);
+    });
+    body.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-del'), 10);
+        const arr = loadLog();
+        arr.splice(i, 1);
+        saveLogArr(arr);
+        renderLog();
+        toast('Entry deleted');
+      });
+    });
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    recalcAll();
+    const rec = collectRecord();
+    if (!rec.workOrder && !rec.performedBy){
+      if (!confirm('Work Order and Performed By are blank. Save anyway?')) return;
+    }
+    const arr = loadLog();
+    arr.push(rec);
+    saveLogArr(arr);
+    renderLog();
+    toast('Saved to log');
+  });
+
+  document.getElementById('newBtn').addEventListener('click', () => {
+    if (!confirm('Clear the form for a new test? Unsaved data will be lost.')) return;
+    document.querySelectorAll('main input[type=text], main input[type=date], main input[type=number], main textarea').forEach(el => el.value = '');
+    retestSection.classList.remove('show');
+    document.getElementById('toggleRetest').style.display = 'inline-block';
+    recalcAll();
+    toast('Form cleared');
+  });
+
+  document.getElementById('loadLastBtn').addEventListener('click', () => {
+    const arr = loadLog();
+    if (arr.length === 0){ toast('No saved entries yet'); return; }
+    const rec = arr[arr.length - 1];
+    document.getElementById('workOrder').value = rec.workOrder || '';
+    document.getElementById('testDate').value = rec.date || '';
+    document.getElementById('performedBy').value = rec.performedBy || '';
+    document.getElementById('comments').value = rec.comments || '';
+    fillInputs('c-A', rec.crusher.A); fillInputs('c-B', rec.crusher.B); fillInputs('c-C', rec.crusher.C);
+    fillInputs('m-E', rec.mill.E); fillInputs('m-F', rec.mill.F); fillInputs('m-G', rec.mill.G);
+    if (rec.hasRetest){
+      retestSection.classList.add('show');
+      document.getElementById('toggleRetest').style.display = 'none';
+      document.getElementById('retestDate').value = rec.retestDate || '';
+      document.getElementById('retestBy').value = rec.retestBy || '';
+      document.getElementById('turnAdjusted').value = rec.turnAdjusted || '';
+      document.getElementById('newCrusherGap').value = rec.newCrusherGap || '';
+      if (rec.crusherR) { fillInputs('rc-A', rec.crusherR.A); fillInputs('rc-B', rec.crusherR.B); fillInputs('rc-C', rec.crusherR.C); }
+      if (rec.millR) { fillInputs('rm-E', rec.millR.E); fillInputs('rm-F', rec.millR.F); fillInputs('rm-G', rec.millR.G); }
+    }
+    recalcAll();
+    toast('Last saved entry loaded');
+  });
+
+  function fillInputs(prefix, values){
+    values.forEach((v, i) => {
+      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
+      if (el) el.value = (v === null || v === undefined) ? '' : v;
+    });
+  }
+
+  // ---- CSV export ----
+  document.getElementById('exportCsvBtn').addEventListener('click', () => {
+    const arr = loadLog();
+    if (arr.length === 0){ toast('No saved entries to export'); return; }
+    const headers = [
+      'work_order','date','performed_by','comments',
+      'crusher_A_NBLL_A','crusher_A_NBLL_B','crusher_A_MACF_A','crusher_A_MACF_B',
+      'crusher_B_NBLL_A','crusher_B_NBLL_B','crusher_B_MACF_A','crusher_B_MACF_B',
+      'crusher_C_NBLL_A','crusher_C_NBLL_B','crusher_C_MACF_A','crusher_C_MACF_B',
+      'crusher_D_NBLL_A','crusher_D_NBLL_B','crusher_D_MACF_A','crusher_D_MACF_B',
+      'crusher_passrate_NBLL_A','crusher_passrate_NBLL_B','crusher_passrate_MACF_A','crusher_passrate_MACF_B',
+      'mill_E_NBLL_A','mill_E_NBLL_B','mill_E_MACF_A','mill_E_MACF_B',
+      'mill_F_NBLL_A','mill_F_NBLL_B','mill_F_MACF_A','mill_F_MACF_B',
+      'mill_G_NBLL_A','mill_G_NBLL_B','mill_G_MACF_A','mill_G_MACF_B',
+      'mill_H_NBLL_A','mill_H_NBLL_B','mill_H_MACF_A','mill_H_MACF_B',
+      'mill_passrate_NBLL_A','mill_passrate_NBLL_B','mill_passrate_MACF_A','mill_passrate_MACF_B',
+      'has_retest','turn_adjusted','new_crusher_gap_mm','overall_result','saved_at'
+    ];
+    const rows = arr.map(rec => {
+      const g = arr2 => arr2.map(v => v===null||v===undefined ? '' : v);
+      return [
+        rec.workOrder, rec.date, rec.performedBy, (rec.comments||'').replace(/[\r\n]+/g,' '),
+        ...g(rec.crusher.A), ...g(rec.crusher.B), ...g(rec.crusher.C), ...g(rec.crusher.D), ...g(rec.crusher.pass),
+        ...g(rec.mill.E), ...g(rec.mill.F), ...g(rec.mill.G), ...g(rec.mill.H), ...g(rec.mill.pass),
+        rec.hasRetest ? 'yes' : 'no', (rec.turnAdjusted ?? ''), (rec.newCrusherGap ?? ''), rec.overall, rec.savedAt
+      ];
+    });
+    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `crusher_mill_test_log_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('CSV exported');
+  });
+
+  // init
+  recalcAll();
+  renderLog();
+})();
+</script>
+
+</body>
+</html>
