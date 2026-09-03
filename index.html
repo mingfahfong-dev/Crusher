@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Crusher &amp; Mill Test Sheet — v5</title>
+<title>Crusher &amp; Mill Test Sheet — v6</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23111111'/%3E%3Cpath d='M14 20 L32 12 L50 20 L44 44 L20 44 Z' fill='none' stroke='%23e07a2b' stroke-width='3'/%3E%3Cpath d='M22 30 L42 30 M25 37 L39 37' stroke='%23e07a2b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -251,7 +251,7 @@
       <h1>Crusher <span>&amp;</span> Mill Test Sheet</h1>
       <div class="subtitle">PMLB — Sample sizing verification (2mm crush / 100µm mill)</div>
     </div>
-    <div class="version-tag">v5</div>
+    <div class="version-tag">v6</div>
   </div>
 </header>
 
@@ -483,21 +483,24 @@
     <button class="ghost" id="loadDraftBtn" disabled>Load Draft</button>
     <button class="primary" id="submitBtn">Submit</button>
     <button class="ghost" id="newBtn">New / Clear form</button>
-    <button class="ghost" id="loadLastBtn">Load Last Submitted</button>
     <button class="ghost" id="printBtn">Print / Save PDF</button>
   </div>
 
   <section class="block" id="logSection">
     <div class="block-head">
       <h2>Saved Test Log</h2>
-      <button class="ghost" id="exportCsvBtn" style="padding:4px 10px;font-size:0.75rem;">Export CSV</button>
+      <span>
+        <button class="ghost" id="exportCsvBtn" style="padding:4px 10px;font-size:0.75rem;">Export CSV</button>
+        <button class="ghost" id="exportJsonBtn" style="padding:4px 10px;font-size:0.75rem;">Export JSON</button>
+      </span>
     </div>
     <div class="log-wrap">
       <table class="log" id="logTable">
         <thead>
           <tr>
             <th>Work Order</th><th>Date</th><th>Performed By</th>
-            <th>Crusher</th><th>Mill</th><th>Retest</th><th>Overall</th><th>Saved</th><th></th>
+            <th>Crusher</th><th>Mill</th><th>Retest</th><th>Retest Crusher</th><th>Retest Mill</th>
+            <th>Overall</th><th>Saved</th><th></th>
           </tr>
         </thead>
         <tbody id="logBody"></tbody>
@@ -509,7 +512,7 @@
 </main>
 
 <footer>
-  Crusher &amp; Mill Test Sheet Tool <span class="v">v5</span> — PMLB internal tool. Data is stored locally in this browser only.
+  Crusher &amp; Mill Test Sheet Tool <span class="v">v6</span> — PMLB internal tool. Data is stored locally in this browser only.
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -672,6 +675,12 @@
       const tr = document.createElement('tr');
       const crusherOverall = isFail(rec.crusher.pass) ? 'FAIL' : (rec.crusher.pass !== null ? 'PASS' : '—');
       const millOverall = isFail(rec.mill.pass) ? 'FAIL' : (rec.mill.pass !== null ? 'PASS' : '—');
+      const retestCrusherOverall = rec.hasRetest && rec.crusherR
+        ? (isFail(rec.crusherR.pass) ? 'FAIL' : (rec.crusherR.pass !== null ? 'PASS' : '—'))
+        : '—';
+      const retestMillOverall = rec.hasRetest && rec.millR
+        ? (isFail(rec.millR.pass) ? 'FAIL' : (rec.millR.pass !== null ? 'PASS' : '—'))
+        : '—';
       const savedDate = new Date(rec.savedAt);
       tr.innerHTML = `
         <td>${rec.workOrder || '—'}</td>
@@ -680,15 +689,30 @@
         <td>${crusherOverall}</td>
         <td>${millOverall}</td>
         <td>${rec.hasRetest ? 'Yes' : 'No'}</td>
+        <td>${retestCrusherOverall}</td>
+        <td>${retestMillOverall}</td>
         <td><span class="badge ${rec.overall==='PASS'?'pass':(rec.overall==='FAIL'?'fail':'pending')}">${rec.overall}</span></td>
         <td>${savedDate.toLocaleDateString()} ${savedDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td>
-        <td><button class="ghost" style="padding:3px 8px;font-size:0.72rem;" data-del="${idx}">Delete</button></td>
+        <td style="white-space:nowrap;">
+          <button class="ghost" style="padding:3px 8px;font-size:0.72rem;" data-load="${idx}">Load</button>
+          <button class="ghost" style="padding:3px 8px;font-size:0.72rem;" data-del="${idx}">Delete</button>
+        </td>
       `;
       body.appendChild(tr);
+    });
+    body.querySelectorAll('[data-load]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-load'), 10);
+        const arr = loadLog();
+        if (!arr[i]) return;
+        applyRecordToForm(arr[i]);
+        toast('Entry loaded into form');
+      });
     });
     body.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', () => {
         const i = parseInt(btn.getAttribute('data-del'), 10);
+        if (!confirm('Delete this saved test entry? This cannot be undone.')) return;
         const arr = loadLog();
         arr.splice(i, 1);
         saveLogArr(arr);
@@ -770,40 +794,75 @@
     toast('Form cleared');
   });
 
-  document.getElementById('loadLastBtn').addEventListener('click', () => {
-    const arr = loadLog();
-    if (arr.length === 0){ toast('No submitted entries yet'); return; }
-    applyRecordToForm(arr[arr.length - 1]);
-    toast('Last submitted entry loaded');
-  });
+  // ---- File saving: uses the browser's native Save As dialog (folder of the
+  // user's choosing) when supported, falling back to a normal download otherwise ----
+  async function saveFile(suggestedName, content, mimeType, description, extensions){
+    if (window.showSaveFilePicker){
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [{ description, accept: { [mimeType]: extensions } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        return true;
+      } catch(err){
+        if (err && err.name === 'AbortError') return false; // user cancelled the dialog
+        // fall through to the plain-download fallback on any other error
+      }
+    }
+    const blob = new Blob([content], {type: mimeType});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = suggestedName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
+  }
 
-  document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  document.getElementById('exportCsvBtn').addEventListener('click', async () => {
     const arr = loadLog();
     if (arr.length === 0){ toast('No submitted entries to export'); return; }
     const headers = [
       'work_order','date','performed_by','comments',
       'crusher_A','crusher_B','crusher_C','crusher_D','crusher_passrate',
       'mill_E','mill_F','mill_G','mill_H','mill_passrate',
-      'has_retest','turn_adjusted','new_crusher_gap_mm','overall_result','saved_at'
+      'has_retest','turn_adjusted','new_crusher_gap_mm',
+      'retest_crusher_A','retest_crusher_B','retest_crusher_C','retest_crusher_D','retest_crusher_passrate',
+      'retest_mill_E','retest_mill_F','retest_mill_G','retest_mill_H','retest_mill_passrate',
+      'overall_result','saved_at'
     ];
     const nz = v => (v===null||v===undefined) ? '' : v;
-    const rows = arr.map(rec => [
-      rec.workOrder, rec.date, rec.performedBy, (rec.comments||'').replace(/[\r\n]+/g,' '),
-      nz(rec.crusher.A), nz(rec.crusher.B), nz(rec.crusher.C), nz(rec.crusher.D), nz(rec.crusher.pass),
-      nz(rec.mill.E), nz(rec.mill.F), nz(rec.mill.G), nz(rec.mill.H), nz(rec.mill.pass),
-      rec.hasRetest ? 'yes' : 'no', nz(rec.turnAdjusted), nz(rec.newCrusherGap), rec.overall, rec.savedAt
-    ]);
+    const rows = arr.map(rec => {
+      const cr = rec.crusherR || {A:null,B:null,C:null,D:null,pass:null};
+      const mr = rec.millR || {E:null,F:null,G:null,H:null,pass:null};
+      return [
+        rec.workOrder, rec.date, rec.performedBy, (rec.comments||'').replace(/[\r\n]+/g,' '),
+        nz(rec.crusher.A), nz(rec.crusher.B), nz(rec.crusher.C), nz(rec.crusher.D), nz(rec.crusher.pass),
+        nz(rec.mill.E), nz(rec.mill.F), nz(rec.mill.G), nz(rec.mill.H), nz(rec.mill.pass),
+        rec.hasRetest ? 'yes' : 'no', nz(rec.turnAdjusted), nz(rec.newCrusherGap),
+        nz(cr.A), nz(cr.B), nz(cr.C), nz(cr.D), nz(cr.pass),
+        nz(mr.E), nz(mr.F), nz(mr.G), nz(mr.H), nz(mr.pass),
+        rec.overall, rec.savedAt
+      ];
+    });
     const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `crusher_mill_test_log_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast('CSV exported');
+    const name = `crusher_mill_test_log_${new Date().toISOString().slice(0,10)}.csv`;
+    const ok = await saveFile(name, csv, 'text/csv', 'CSV file', ['.csv']);
+    if (ok) toast('CSV exported');
+  });
+
+  document.getElementById('exportJsonBtn').addEventListener('click', async () => {
+    const arr = loadLog();
+    if (arr.length === 0){ toast('No submitted entries to export'); return; }
+    const json = JSON.stringify(arr, null, 2);
+    const name = `crusher_mill_test_log_${new Date().toISOString().slice(0,10)}.json`;
+    const ok = await saveFile(name, json, 'application/json', 'JSON file', ['.json']);
+    if (ok) toast('JSON exported');
   });
 
   recalcAll();
