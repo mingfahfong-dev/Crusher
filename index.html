@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Crusher &amp; Mill Test Sheet — v4</title>
+<title>Crusher &amp; Mill Test Sheet — v5</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23111111'/%3E%3Cpath d='M14 20 L32 12 L50 20 L44 44 L20 44 Z' fill='none' stroke='%23e07a2b' stroke-width='3'/%3E%3Cpath d='M22 30 L42 30 M25 37 L39 37' stroke='%23e07a2b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -60,7 +60,7 @@
     border-radius:3px;
     white-space:nowrap;
   }
-  main{max-width:980px;margin:0 auto;padding:20px 20px 0;}
+  main{max-width:720px;margin:0 auto;padding:20px 20px 0;}
   .meta-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
@@ -93,7 +93,6 @@
     outline:none;
     border-color:var(--orange);
   }
-  /* remove native up/down spinner on number cells */
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button{
     -webkit-appearance:none;
@@ -102,16 +101,10 @@
   input[type=number]{
     -moz-appearance:textfield;
   }
-  .date-field{
-    display:flex;
-    gap:6px;
-  }
+  .date-field{display:flex; gap:6px;}
   .date-field input[type=date]{flex:1; min-width:0;}
-  .today-btn{
-    padding:0 10px;
-    font-size:0.72rem;
-    white-space:nowrap;
-  }
+  .today-btn{padding:0 10px; font-size:0.72rem; white-space:nowrap;}
+
   section.block{
     background:var(--bg-panel);
     border:1px solid var(--line);
@@ -129,48 +122,24 @@
     flex-wrap:wrap;
     gap:6px;
   }
-  .block-head h2{
-    margin:0;
-    font-size:0.95rem;
-    font-weight:600;
-  }
-  .block-head .threshold{
-    font-family:var(--font-data);
-    font-size:0.75rem;
-    color:var(--orange);
-  }
+  .block-head h2{margin:0; font-size:0.95rem; font-weight:600;}
+  .block-head .threshold{font-family:var(--font-data); font-size:0.75rem; color:var(--orange);}
 
-  /* ---- Desktop table (wide screens) ---- */
-  .desktop-table{
-    width:100%;
-    border-collapse:collapse;
-    font-family:var(--font-data);
-    font-size:0.85rem;
-  }
-  .desktop-table th, .desktop-table td{
-    padding:8px 10px;
-    border-bottom:1px solid var(--line);
-    text-align:right;
-  }
-  .desktop-table th{
-    text-align:right;
-    color:var(--text-dim);
-    font-weight:500;
-    font-size:0.75rem;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-  }
-  .desktop-table td.rowlabel, .desktop-table th.rowlabel{
+  .test-table{width:100%; border-collapse:collapse; font-family:var(--font-data); font-size:0.9rem;}
+  .test-table td{padding:10px 16px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .test-table tr:last-child td{border-bottom:none;}
+  .test-table td.rowlabel{
     text-align:left;
     font-family:var(--font-ui);
     color:var(--text);
     font-size:0.85rem;
-    white-space:nowrap;
+    width:60%;
   }
-  .desktop-table td.rowlabel .sym{color:var(--orange-dim);font-family:var(--font-data);margin-left:4px;}
-  .desktop-table tr.computed td{color:var(--text-dim);}
-  .desktop-table tr.computed input{color:var(--text-dim);}
-  .desktop-table td input{width:90px;text-align:right;}
+  .test-table td.rowlabel .sym{color:var(--orange-dim); font-family:var(--font-data); margin-left:4px;}
+  .test-table td.valuecell{text-align:right;}
+  .test-table td.valuecell input{width:130px; text-align:right; margin-left:auto;}
+  .test-table tr.computed td.rowlabel{color:var(--text-dim);}
+  .test-table tr.computed input{color:var(--text-dim);}
 
   .readonly{
     background:transparent!important;
@@ -179,67 +148,17 @@
   }
   .badge{
     display:inline-block;
-    min-width:52px;
+    min-width:64px;
     text-align:center;
-    padding:3px 8px;
+    padding:4px 10px;
     border-radius:3px;
-    font-size:0.75rem;
+    font-size:0.8rem;
     font-weight:600;
     letter-spacing:0.4px;
   }
   .badge.pass{background:rgba(74,155,110,0.18);color:var(--pass);border:1px solid var(--pass);}
   .badge.fail{background:rgba(193,80,63,0.18);color:var(--fail);border:1px solid var(--fail);}
   .badge.pending{background:transparent;color:var(--text-dim);border:1px solid var(--line);}
-
-  /* ---- Mobile card view (narrow screens) ---- */
-  .mobile-cards{display:none;}
-  .sample-tabs{
-    display:flex;
-    gap:4px;
-    padding:10px 10px 0;
-    flex-wrap:wrap;
-  }
-  .sample-tab{
-    flex:1 1 auto;
-    min-width:64px;
-    padding:9px 4px;
-    font-size:0.75rem;
-    text-align:center;
-    background:var(--bg-panel-2);
-    border:1px solid var(--line);
-    border-bottom:none;
-    border-radius:5px 5px 0 0;
-    color:var(--text-dim);
-    cursor:pointer;
-  }
-  .sample-tab.active{
-    color:var(--orange);
-    border-color:var(--orange-dim);
-    background:var(--input-bg);
-    font-weight:600;
-  }
-  .sample-panel{display:none; padding:4px 12px 12px;}
-  .sample-panel.active{display:block;}
-  .mobile-field{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    padding:10px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .mobile-field:last-child{border-bottom:none;}
-  .mobile-field-label{
-    font-size:0.8rem;
-    color:var(--text-dim);
-    flex:1 1 auto;
-  }
-  .mobile-field.computed .mobile-field-label{color:var(--text-dim);}
-  .mobile-field-value{
-    flex:0 0 auto;
-    width:110px;
-  }
-  .mobile-field-value input{width:100%;text-align:right;}
 
   .comment-row{padding:14px 16px;}
   .comment-row label{
@@ -250,19 +169,9 @@
     display:block;
     margin-bottom:6px;
   }
-  .escalate-hint{
-    font-size:0.78rem;
-    color:var(--fail);
-    margin-top:6px;
-    display:none;
-  }
+  .escalate-hint{font-size:0.78rem; color:var(--fail); margin-top:6px; display:none;}
   .escalate-hint.show{display:block;}
-  .actions-row{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:20px 0;
-  }
+  .actions-row{display:flex; gap:10px; flex-wrap:wrap; margin:20px 0;}
   button{
     font-family:var(--font-ui);
     font-size:0.85rem;
@@ -278,15 +187,8 @@
   button:hover{border-color:var(--orange);color:var(--orange);}
   button:disabled{opacity:0.45; cursor:not-allowed;}
   button:disabled:hover{border-color:var(--line);color:var(--text);}
-  button.primary{
-    background:var(--orange);
-    border-color:var(--orange);
-    color:#161616;
-  }
-  button.primary:hover{
-    background:#f08b3c;
-    color:#161616;
-  }
+  button.primary{background:var(--orange); border-color:var(--orange); color:#161616;}
+  button.primary:hover{background:#f08b3c; color:#161616;}
   button.ghost{background:transparent;}
   .retest-toggle-wrap{margin:4px 0 18px;}
   #retestSection{display:none;}
@@ -294,51 +196,30 @@
   .close-retest{float:right;}
   table.log{font-size:0.78rem;width:100%;border-collapse:collapse;}
   table.log th, table.log td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);}
-  table.log td.num{text-align:right;}
   .log-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   .empty-log{color:var(--text-dim);font-size:0.85rem;padding:16px;text-align:center;}
-  footer{
-    text-align:center;
-    color:var(--text-dim);
-    font-size:0.75rem;
-    padding:24px 0 10px;
-  }
+  footer{text-align:center; color:var(--text-dim); font-size:0.75rem; padding:24px 0 10px;}
   footer .v{color:var(--orange);}
   .toast{
-    position:fixed;
-    bottom:22px;
-    left:50%;
+    position:fixed; bottom:22px; left:50%;
     transform:translateX(-50%) translateY(20px);
-    background:var(--bg-panel-2);
-    border:1px solid var(--orange);
-    color:var(--text);
-    padding:10px 18px;
-    border-radius:6px;
-    font-size:0.85rem;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.2s, transform 0.2s;
-    z-index:50;
-    max-width:88vw;
-    text-align:center;
+    background:var(--bg-panel-2); border:1px solid var(--orange); color:var(--text);
+    padding:10px 18px; border-radius:6px; font-size:0.85rem;
+    opacity:0; pointer-events:none; transition:opacity 0.2s, transform 0.2s;
+    z-index:50; max-width:88vw; text-align:center;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  /* Prevent iOS Safari auto-zoom on input focus + bigger touch targets on phones */
-  @media (max-width:760px){
-    input[type=text], input[type=date], input[type=number], textarea{
-      font-size:16px;
-    }
-    button{
-      padding:12px 14px;
-      font-size:0.92rem;
-    }
+  @media (max-width:600px){
+    input[type=text], input[type=date], input[type=number], textarea{ font-size:16px; }
+    button{padding:12px 14px; font-size:0.92rem;}
     main{padding:14px 12px 0;}
     header{padding:14px 14px 12px;}
     h1{font-size:1.15rem;}
+    .test-table td{padding:10px 12px;}
+    .test-table td.valuecell input{width:100px;}
   }
 
-  /* ---- Print ---- */
   @media print{
     body{background:#fff; color:#000; padding-bottom:0;}
     header{background:#fff; border-bottom:2px solid #000;}
@@ -347,21 +228,17 @@
     .meta-grid{background:#fff; border:1px solid #000;}
     section.block{background:#fff; border:1px solid #000; break-inside:avoid;}
     .block-head{background:#eee; border-bottom:1px solid #000; color:#000;}
-    .block-head h2{color:#000;}
-    .block-head .threshold{color:#000;}
-    .desktop-table{display:table !important; color:#000;}
-    .mobile-cards{display:none !important;}
-    .desktop-table th{color:#333;}
-    .desktop-table th, .desktop-table td{border-bottom:1px solid #999;}
-    .desktop-table td.rowlabel{color:#000;}
+    .block-head h2, .block-head .threshold{color:#000;}
+    .test-table{color:#000;}
+    .test-table td{border-bottom:1px solid #999;}
+    .test-table td.rowlabel{color:#000;}
     input, textarea{background:#fff !important; color:#000 !important; border:1px solid #999 !important;}
     .readonly{border:1px dashed #999 !important;}
     .badge.pass{background:#fff; color:#000; border:1.5px solid #000; font-weight:700;}
     .badge.fail{background:#fff; color:#000; border:2px solid #000; font-weight:700;}
     .badge.pending{border:1px solid #999; color:#333;}
     .escalate-hint{color:#000; font-weight:700;}
-    .actions-row, .retest-toggle-wrap .today-btn, .today-btn, .close-retest,
-    #logSection, .actions-row, footer, .toast { display:none !important; }
+    .actions-row, .today-btn, .close-retest, #logSection, footer, .toast { display:none !important; }
     main{max-width:100%; padding:0;}
   }
 </style>
@@ -374,7 +251,7 @@
       <h1>Crusher <span>&amp;</span> Mill Test Sheet</h1>
       <div class="subtitle">PMLB — Sample sizing verification (2mm crush / 100µm mill)</div>
     </div>
-    <div class="version-tag">v4</div>
+    <div class="version-tag">v5</div>
   </div>
 </header>
 
@@ -404,137 +281,81 @@
   <!-- CRUSHER TEST -->
   <section class="block">
     <div class="block-head">
-      <h2>Crusher Test Results</h2>
+      <h2>Crusher Test Result — NBLL</h2>
       <span class="threshold">95% passing 2mm</span>
     </div>
-    <table class="desktop-table" id="crusherTable">
-      <thead>
-        <tr>
-          <th class="rowlabel"></th>
-          <th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th>
-        </tr>
-      </thead>
+    <table class="test-table">
       <tbody>
         <tr>
           <td class="rowlabel">Starting Weight<span class="sym">A</span></td>
-          <td><input type="number" step="any" class="c-A" data-col="0"></td>
-          <td><input type="number" step="any" class="c-A" data-col="1"></td>
-          <td><input type="number" step="any" class="c-A" data-col="2"></td>
-          <td><input type="number" step="any" class="c-A" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="c-A"></td>
         </tr>
         <tr>
           <td class="rowlabel">+2mm Product Weight<span class="sym">B</span></td>
-          <td><input type="number" step="any" class="c-B" data-col="0"></td>
-          <td><input type="number" step="any" class="c-B" data-col="1"></td>
-          <td><input type="number" step="any" class="c-B" data-col="2"></td>
-          <td><input type="number" step="any" class="c-B" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="c-B"></td>
         </tr>
         <tr>
           <td class="rowlabel">-2mm Product Weight<span class="sym">C</span></td>
-          <td><input type="number" step="any" class="c-C" data-col="0"></td>
-          <td><input type="number" step="any" class="c-C" data-col="1"></td>
-          <td><input type="number" step="any" class="c-C" data-col="2"></td>
-          <td><input type="number" step="any" class="c-C" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="c-C"></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">Final Product Weight (B+C)<span class="sym">D</span></td>
-          <td><input class="readonly c-D" data-col="0" readonly></td>
-          <td><input class="readonly c-D" data-col="1" readonly></td>
-          <td><input class="readonly c-D" data-col="2" readonly></td>
-          <td><input class="readonly c-D" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly c-D" readonly></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">Retention Wt % +2mm (B/D)×100</td>
-          <td><input class="readonly c-ret" data-col="0" readonly></td>
-          <td><input class="readonly c-ret" data-col="1" readonly></td>
-          <td><input class="readonly c-ret" data-col="2" readonly></td>
-          <td><input class="readonly c-ret" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly c-ret" readonly></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">Passing Rate % −2mm (C/D)×100</td>
-          <td><input class="readonly c-pass" data-col="0" readonly></td>
-          <td><input class="readonly c-pass" data-col="1" readonly></td>
-          <td><input class="readonly c-pass" data-col="2" readonly></td>
-          <td><input class="readonly c-pass" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly c-pass" readonly></td>
         </tr>
         <tr>
           <td class="rowlabel">Passing rate &gt; 95%?</td>
-          <td><span class="badge pending c-badge" data-col="0">—</span></td>
-          <td><span class="badge pending c-badge" data-col="1">—</span></td>
-          <td><span class="badge pending c-badge" data-col="2">—</span></td>
-          <td><span class="badge pending c-badge" data-col="3">—</span></td>
+          <td class="valuecell"><span class="badge pending c-badge">—</span></td>
         </tr>
       </tbody>
     </table>
-    <div class="mobile-cards" id="crusherMobile"></div>
   </section>
 
   <!-- MILL TEST -->
   <section class="block">
     <div class="block-head">
-      <h2>Mill Test Results</h2>
+      <h2>Mill Test Result — NBLL</h2>
       <span class="threshold">95% passing 100µm</span>
     </div>
-    <table class="desktop-table" id="millTable">
-      <thead>
-        <tr>
-          <th class="rowlabel"></th>
-          <th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th>
-        </tr>
-      </thead>
+    <table class="test-table">
       <tbody>
         <tr>
           <td class="rowlabel">Starting Milled Weight<span class="sym">E</span></td>
-          <td><input type="number" step="any" class="m-E" data-col="0"></td>
-          <td><input type="number" step="any" class="m-E" data-col="1"></td>
-          <td><input type="number" step="any" class="m-E" data-col="2"></td>
-          <td><input type="number" step="any" class="m-E" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="m-E"></td>
         </tr>
         <tr>
           <td class="rowlabel">Tray Weight<span class="sym">F</span></td>
-          <td><input type="number" step="any" class="m-F" data-col="0"></td>
-          <td><input type="number" step="any" class="m-F" data-col="1"></td>
-          <td><input type="number" step="any" class="m-F" data-col="2"></td>
-          <td><input type="number" step="any" class="m-F" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="m-F"></td>
         </tr>
         <tr>
           <td class="rowlabel">Dry Weight<span class="sym">G</span></td>
-          <td><input type="number" step="any" class="m-G" data-col="0"></td>
-          <td><input type="number" step="any" class="m-G" data-col="1"></td>
-          <td><input type="number" step="any" class="m-G" data-col="2"></td>
-          <td><input type="number" step="any" class="m-G" data-col="3"></td>
+          <td class="valuecell"><input type="number" step="any" class="m-G"></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">+100µm Weight (G−F)<span class="sym">H</span></td>
-          <td><input class="readonly m-H" data-col="0" readonly></td>
-          <td><input class="readonly m-H" data-col="1" readonly></td>
-          <td><input class="readonly m-H" data-col="2" readonly></td>
-          <td><input class="readonly m-H" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly m-H" readonly></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">Retention Wt % −100µm (H/E)×100<span class="sym">I</span></td>
-          <td><input class="readonly m-ret" data-col="0" readonly></td>
-          <td><input class="readonly m-ret" data-col="1" readonly></td>
-          <td><input class="readonly m-ret" data-col="2" readonly></td>
-          <td><input class="readonly m-ret" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly m-ret" readonly></td>
         </tr>
         <tr class="computed">
           <td class="rowlabel">Passing Rate % −100µm (100−I)</td>
-          <td><input class="readonly m-pass" data-col="0" readonly></td>
-          <td><input class="readonly m-pass" data-col="1" readonly></td>
-          <td><input class="readonly m-pass" data-col="2" readonly></td>
-          <td><input class="readonly m-pass" data-col="3" readonly></td>
+          <td class="valuecell"><input class="readonly m-pass" readonly></td>
         </tr>
         <tr>
           <td class="rowlabel">Passing rate &gt; 95%?</td>
-          <td><span class="badge pending m-badge" data-col="0">—</span></td>
-          <td><span class="badge pending m-badge" data-col="1">—</span></td>
-          <td><span class="badge pending m-badge" data-col="2">—</span></td>
-          <td><span class="badge pending m-badge" data-col="3">—</span></td>
+          <td class="valuecell"><span class="badge pending m-badge">—</span></td>
         </tr>
       </tbody>
     </table>
-    <div class="mobile-cards" id="millMobile"></div>
   </section>
 
   <section class="block">
@@ -580,130 +401,80 @@
 
     <section class="block">
       <div class="block-head">
-        <h2>Crusher Test Results (Retest)</h2>
+        <h2>Crusher Test Result — NBLL (Retest)</h2>
         <span class="threshold">95% passing 2mm</span>
       </div>
-      <table class="desktop-table" id="crusherTableR">
-        <thead>
-          <tr><th class="rowlabel"></th><th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th></tr>
-        </thead>
+      <table class="test-table">
         <tbody>
           <tr>
             <td class="rowlabel">Starting Weight<span class="sym">A</span></td>
-            <td><input type="number" step="any" class="rc-A" data-col="0"></td>
-            <td><input type="number" step="any" class="rc-A" data-col="1"></td>
-            <td><input type="number" step="any" class="rc-A" data-col="2"></td>
-            <td><input type="number" step="any" class="rc-A" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rc-A"></td>
           </tr>
           <tr>
             <td class="rowlabel">+2mm Product Weight<span class="sym">B</span></td>
-            <td><input type="number" step="any" class="rc-B" data-col="0"></td>
-            <td><input type="number" step="any" class="rc-B" data-col="1"></td>
-            <td><input type="number" step="any" class="rc-B" data-col="2"></td>
-            <td><input type="number" step="any" class="rc-B" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rc-B"></td>
           </tr>
           <tr>
             <td class="rowlabel">-2mm Product Weight<span class="sym">C</span></td>
-            <td><input type="number" step="any" class="rc-C" data-col="0"></td>
-            <td><input type="number" step="any" class="rc-C" data-col="1"></td>
-            <td><input type="number" step="any" class="rc-C" data-col="2"></td>
-            <td><input type="number" step="any" class="rc-C" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rc-C"></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">Final Product Weight (B+C)<span class="sym">D</span></td>
-            <td><input class="readonly rc-D" data-col="0" readonly></td>
-            <td><input class="readonly rc-D" data-col="1" readonly></td>
-            <td><input class="readonly rc-D" data-col="2" readonly></td>
-            <td><input class="readonly rc-D" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rc-D" readonly></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">Retention Wt % +2mm (B/D)×100</td>
-            <td><input class="readonly rc-ret" data-col="0" readonly></td>
-            <td><input class="readonly rc-ret" data-col="1" readonly></td>
-            <td><input class="readonly rc-ret" data-col="2" readonly></td>
-            <td><input class="readonly rc-ret" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rc-ret" readonly></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">Passing Rate % −2mm (C/D)×100</td>
-            <td><input class="readonly rc-pass" data-col="0" readonly></td>
-            <td><input class="readonly rc-pass" data-col="1" readonly></td>
-            <td><input class="readonly rc-pass" data-col="2" readonly></td>
-            <td><input class="readonly rc-pass" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rc-pass" readonly></td>
           </tr>
           <tr>
             <td class="rowlabel">Passing rate &gt; 95%?</td>
-            <td><span class="badge pending rc-badge" data-col="0">—</span></td>
-            <td><span class="badge pending rc-badge" data-col="1">—</span></td>
-            <td><span class="badge pending rc-badge" data-col="2">—</span></td>
-            <td><span class="badge pending rc-badge" data-col="3">—</span></td>
+            <td class="valuecell"><span class="badge pending rc-badge">—</span></td>
           </tr>
         </tbody>
       </table>
-      <div class="mobile-cards" id="crusherMobileR"></div>
     </section>
 
     <section class="block">
       <div class="block-head">
-        <h2>Mill Test Results (Retest)</h2>
+        <h2>Mill Test Result — NBLL (Retest)</h2>
         <span class="threshold">95% passing 100µm</span>
       </div>
-      <table class="desktop-table" id="millTableR">
-        <thead>
-          <tr><th class="rowlabel"></th><th>NBLL A</th><th>NBLL B</th><th>MACF A</th><th>MACF B</th></tr>
-        </thead>
+      <table class="test-table">
         <tbody>
           <tr>
             <td class="rowlabel">Starting Milled Weight<span class="sym">E</span></td>
-            <td><input type="number" step="any" class="rm-E" data-col="0"></td>
-            <td><input type="number" step="any" class="rm-E" data-col="1"></td>
-            <td><input type="number" step="any" class="rm-E" data-col="2"></td>
-            <td><input type="number" step="any" class="rm-E" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rm-E"></td>
           </tr>
           <tr>
             <td class="rowlabel">Tray Weight<span class="sym">F</span></td>
-            <td><input type="number" step="any" class="rm-F" data-col="0"></td>
-            <td><input type="number" step="any" class="rm-F" data-col="1"></td>
-            <td><input type="number" step="any" class="rm-F" data-col="2"></td>
-            <td><input type="number" step="any" class="rm-F" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rm-F"></td>
           </tr>
           <tr>
             <td class="rowlabel">Dry Weight<span class="sym">G</span></td>
-            <td><input type="number" step="any" class="rm-G" data-col="0"></td>
-            <td><input type="number" step="any" class="rm-G" data-col="1"></td>
-            <td><input type="number" step="any" class="rm-G" data-col="2"></td>
-            <td><input type="number" step="any" class="rm-G" data-col="3"></td>
+            <td class="valuecell"><input type="number" step="any" class="rm-G"></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">+100µm Weight (G−F)<span class="sym">H</span></td>
-            <td><input class="readonly rm-H" data-col="0" readonly></td>
-            <td><input class="readonly rm-H" data-col="1" readonly></td>
-            <td><input class="readonly rm-H" data-col="2" readonly></td>
-            <td><input class="readonly rm-H" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rm-H" readonly></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">Retention Wt % −100µm (H/E)×100<span class="sym">I</span></td>
-            <td><input class="readonly rm-ret" data-col="0" readonly></td>
-            <td><input class="readonly rm-ret" data-col="1" readonly></td>
-            <td><input class="readonly rm-ret" data-col="2" readonly></td>
-            <td><input class="readonly rm-ret" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rm-ret" readonly></td>
           </tr>
           <tr class="computed">
             <td class="rowlabel">Passing Rate % −100µm (100−I)</td>
-            <td><input class="readonly rm-pass" data-col="0" readonly></td>
-            <td><input class="readonly rm-pass" data-col="1" readonly></td>
-            <td><input class="readonly rm-pass" data-col="2" readonly></td>
-            <td><input class="readonly rm-pass" data-col="3" readonly></td>
+            <td class="valuecell"><input class="readonly rm-pass" readonly></td>
           </tr>
           <tr>
             <td class="rowlabel">Passing rate &gt; 95%?</td>
-            <td><span class="badge pending rm-badge" data-col="0">—</span></td>
-            <td><span class="badge pending rm-badge" data-col="1">—</span></td>
-            <td><span class="badge pending rm-badge" data-col="2">—</span></td>
-            <td><span class="badge pending rm-badge" data-col="3">—</span></td>
+            <td class="valuecell"><span class="badge pending rm-badge">—</span></td>
           </tr>
         </tbody>
       </table>
-      <div class="mobile-cards" id="millMobileR"></div>
     </section>
   </div>
 
@@ -738,15 +509,13 @@
 </main>
 
 <footer>
-  Crusher &amp; Mill Test Sheet Tool <span class="v">v4</span> — PMLB internal tool. Data is stored locally in this browser only.
+  Crusher &amp; Mill Test Sheet Tool <span class="v">v5</span> — PMLB internal tool. Data is stored locally in this browser only.
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
-  const SAMPLES = ['col0','col1','col2','col3'];
-  const SAMPLE_NAMES = ['NBLL A','NBLL B','MACF A','MACF B'];
   const STORAGE_KEY = 'pmlb_crusher_mill_log_v1';
   const DRAFT_KEY = 'pmlb_crusher_mill_draft_v1';
 
@@ -754,59 +523,50 @@
     if (v === null || v === undefined || isNaN(v)) return '';
     return v.toFixed(digits);
   }
-
-  function getVals(prefix){
-    return SAMPLES.map((_, i) => {
-      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
-      if (!el) return null;
-      const v = parseFloat(el.value);
-      return isNaN(v) ? null : v;
-    });
+  function getVal(cls){
+    const el = document.querySelector(`.${cls}`);
+    if (!el) return null;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? null : v;
   }
-
-  function setReadonly(prefix, values, digits){
-    values.forEach((v, i) => {
-      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
-      if (el) el.value = fmtNum(v, digits);
-    });
+  function setReadonly(cls, value, digits){
+    const el = document.querySelector(`.${cls}`);
+    if (el) el.value = fmtNum(value, digits);
   }
-
-  function setBadges(prefix, passRates){
-    passRates.forEach((v, i) => {
-      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
-      if (!el) return;
-      el.classList.remove('pass','fail','pending');
-      if (v === null) { el.classList.add('pending'); el.textContent = '—'; }
-      else if (v > 95) { el.classList.add('pass'); el.textContent = 'PASS'; }
-      else { el.classList.add('fail'); el.textContent = 'FAIL'; }
-    });
+  function setBadge(cls, passRate){
+    const el = document.querySelector(`.${cls}`);
+    if (!el) return;
+    el.classList.remove('pass','fail','pending');
+    if (passRate === null){ el.classList.add('pending'); el.textContent = '—'; }
+    else if (passRate > 95){ el.classList.add('pass'); el.textContent = 'PASS'; }
+    else { el.classList.add('fail'); el.textContent = 'FAIL'; }
   }
+  function isFail(passVal){ return passVal !== null && passVal <= 95; }
 
   function calcCrusher(pfx){
-    const A = getVals(`${pfx}-A`);
-    const B = getVals(`${pfx}-B`);
-    const C = getVals(`${pfx}-C`);
-    const D = B.map((b,i) => (b===null || C[i]===null) ? null : b + C[i]);
-    const ret = D.map((d,i) => (d===null || d===0 || B[i]===null) ? null : (B[i]/d)*100);
-    const pass = D.map((d,i) => (d===null || d===0 || C[i]===null) ? null : (C[i]/d)*100);
+    const A = getVal(`${pfx}-A`);
+    const B = getVal(`${pfx}-B`);
+    const C = getVal(`${pfx}-C`);
+    const D = (B===null || C===null) ? null : B + C;
+    const ret = (D===null || D===0 || B===null) ? null : (B/D)*100;
+    const pass = (D===null || D===0 || C===null) ? null : (C/D)*100;
     setReadonly(`${pfx}-D`, D, 2);
     setReadonly(`${pfx}-ret`, ret, 2);
     setReadonly(`${pfx}-pass`, pass, 2);
-    setBadges(`${pfx}-badge`, pass);
+    setBadge(`${pfx}-badge`, pass);
     return {A,B,C,D,ret,pass};
   }
-
   function calcMill(pfx){
-    const E = getVals(`${pfx}-E`);
-    const F = getVals(`${pfx}-F`);
-    const G = getVals(`${pfx}-G`);
-    const H = G.map((g,i) => (g===null || F[i]===null) ? null : g - F[i]);
-    const ret = H.map((h,i) => (h===null || E[i]===null || E[i]===0) ? null : (h/E[i])*100);
-    const pass = ret.map(r => r===null ? null : 100 - r);
+    const E = getVal(`${pfx}-E`);
+    const F = getVal(`${pfx}-F`);
+    const G = getVal(`${pfx}-G`);
+    const H = (G===null || F===null) ? null : G - F;
+    const ret = (H===null || E===null || E===0) ? null : (H/E)*100;
+    const pass = (ret===null) ? null : 100 - ret;
     setReadonly(`${pfx}-H`, H, 4);
     setReadonly(`${pfx}-ret`, ret, 3);
     setReadonly(`${pfx}-pass`, pass, 3);
-    setBadges(`${pfx}-badge`, pass);
+    setBadge(`${pfx}-badge`, pass);
     return {E,F,G,H,ret,pass};
   }
 
@@ -820,14 +580,10 @@
     updateEscalation();
   }
 
-  function anyFail(passArr){
-    return passArr.some(v => v !== null && v <= 95);
-  }
-
   function updateEscalation(){
     const retestOpen = document.getElementById('retestSection').classList.contains('show');
-    let fail = anyFail(lastCrusher.pass) || anyFail(lastMill.pass);
-    if (retestOpen) fail = fail || anyFail(lastCrusherR.pass) || anyFail(lastMillR.pass);
+    let fail = isFail(lastCrusher.pass) || isFail(lastMill.pass);
+    if (retestOpen) fail = fail || isFail(lastCrusherR.pass) || isFail(lastMillR.pass);
     document.getElementById('escalateHint').classList.toggle('show', fail);
   }
 
@@ -835,7 +591,6 @@
     el.addEventListener('input', recalcAll);
   });
 
-  // ---- Today buttons ----
   function todayStr(){
     const d = new Date();
     const pad = n => String(n).padStart(2,'0');
@@ -843,154 +598,12 @@
   }
   document.querySelectorAll('.today-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-today-for');
-      document.getElementById(targetId).value = todayStr();
+      document.getElementById(btn.getAttribute('data-today-for')).value = todayStr();
     });
   });
 
-  // ---- Responsive layout: desktop table <-> mobile per-sample cards ----
-  const crusherRowsDef = [
-    {label:'Starting Weight (A)', cls:'A', type:'input'},
-    {label:'+2mm Product Weight (B)', cls:'B', type:'input'},
-    {label:'-2mm Product Weight (C)', cls:'C', type:'input'},
-    {label:'Final Product Weight (D = B+C)', cls:'D', type:'readonly'},
-    {label:'Retention Wt % +2mm', cls:'ret', type:'readonly'},
-    {label:'Passing Rate % -2mm', cls:'pass', type:'readonly'},
-    {label:'Result (>95% passing)', cls:'badge', type:'badge'}
-  ];
-  const millRowsDef = [
-    {label:'Starting Milled Weight (E)', cls:'E', type:'input'},
-    {label:'Tray Weight (F)', cls:'F', type:'input'},
-    {label:'Dry Weight (G)', cls:'G', type:'input'},
-    {label:'+100µm Weight (H = G-F)', cls:'H', type:'readonly'},
-    {label:'Retention Wt % -100µm', cls:'ret', type:'readonly'},
-    {label:'Passing Rate % -100µm', cls:'pass', type:'readonly'},
-    {label:'Result (>95% passing)', cls:'badge', type:'badge'}
-  ];
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
 
-  const groups = [
-    {prefix:'c', rows:crusherRowsDef, mobileId:'crusherMobile', desktopTableId:'crusherTable'},
-    {prefix:'m', rows:millRowsDef, mobileId:'millMobile', desktopTableId:'millTable'},
-    {prefix:'rc', rows:crusherRowsDef, mobileId:'crusherMobileR', desktopTableId:'crusherTableR'},
-    {prefix:'rm', rows:millRowsDef, mobileId:'millMobileR', desktopTableId:'millTableR'}
-  ];
-
-  function findEl(prefix, cls, col){
-    return document.querySelector(`.${prefix}-${cls}[data-col="${col}"]`);
-  }
-
-  groups.forEach(g => {
-    // capture original table-cell homes before any moves
-    g.originalParents = g.rows.map(row => {
-      const arr = [];
-      for (let i=0;i<4;i++){
-        const el = findEl(g.prefix, row.cls, i);
-        arr.push(el ? el.parentElement : null);
-      }
-      return arr;
-    });
-
-    // build the mobile card markup once (tabs + 4 panels + empty value slots)
-    const container = document.getElementById(g.mobileId);
-    const tabs = document.createElement('div');
-    tabs.className = 'sample-tabs';
-    const panels = [];
-    SAMPLE_NAMES.forEach((name, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'sample-tab' + (i === 0 ? ' active' : '');
-      btn.textContent = name;
-      btn.dataset.idx = i;
-      tabs.appendChild(btn);
-      const panel = document.createElement('div');
-      panel.className = 'sample-panel' + (i === 0 ? ' active' : '');
-      panel.dataset.idx = i;
-      panels.push(panel);
-    });
-    container.appendChild(tabs);
-    panels.forEach(p => container.appendChild(p));
-
-    g.valueSlots = g.rows.map(row => {
-      const slots = [];
-      for (let i = 0; i < 4; i++){
-        const wrap = document.createElement('div');
-        wrap.className = 'mobile-field' + (row.type === 'readonly' || row.type === 'badge' ? ' computed' : '');
-        const label = document.createElement('span');
-        label.className = 'mobile-field-label';
-        label.textContent = row.label;
-        const slot = document.createElement('span');
-        slot.className = 'mobile-field-value';
-        wrap.appendChild(label);
-        wrap.appendChild(slot);
-        panels[i].appendChild(wrap);
-        slots.push(slot);
-      }
-      return slots;
-    });
-
-    tabs.querySelectorAll('.sample-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.idx, 10);
-        panels.forEach((p, i) => p.classList.toggle('active', i === idx));
-        tabs.querySelectorAll('.sample-tab').forEach((b, i) => b.classList.toggle('active', i === idx));
-      });
-    });
-  });
-
-  function moveGroupToMobile(g){
-    g.rows.forEach((row, ri) => {
-      for (let i = 0; i < 4; i++){
-        const el = findEl(g.prefix, row.cls, i);
-        if (el && g.valueSlots[ri][i]) g.valueSlots[ri][i].appendChild(el);
-      }
-    });
-  }
-  function moveGroupToDesktop(g){
-    g.rows.forEach((row, ri) => {
-      for (let i = 0; i < 4; i++){
-        const el = findEl(g.prefix, row.cls, i);
-        const parent = g.originalParents[ri][i];
-        if (el && parent) parent.appendChild(el);
-      }
-    });
-  }
-
-  function applyLayout(isMobile){
-    groups.forEach(g => {
-      const desktopTable = document.getElementById(g.desktopTableId);
-      const mobileCards = document.getElementById(g.mobileId);
-      if (isMobile){
-        moveGroupToMobile(g);
-        desktopTable.style.display = 'none';
-        mobileCards.style.display = 'block';
-      } else {
-        moveGroupToDesktop(g);
-        desktopTable.style.display = '';
-        mobileCards.style.display = 'none';
-      }
-    });
-  }
-
-  let mq = null;
-  if (typeof window.matchMedia === 'function'){
-    mq = window.matchMedia('(max-width: 760px)');
-    const handleMQChange = e => applyLayout(e.matches);
-    if (mq.addEventListener) mq.addEventListener('change', handleMQChange);
-    else if (mq.addListener) mq.addListener(handleMQChange);
-    applyLayout(mq.matches);
-  } else {
-    // matchMedia unavailable (very old/atypical browser) — fall back to a width check
-    applyLayout(window.innerWidth <= 760);
-  }
-
-  window.addEventListener('beforeprint', () => applyLayout(false));
-  window.addEventListener('afterprint', () => applyLayout(mq ? mq.matches : (window.innerWidth <= 760)));
-
-  document.getElementById('printBtn').addEventListener('click', () => {
-    window.print();
-  });
-
-  // ---- Retest toggle ----
   const retestSection = document.getElementById('retestSection');
   document.getElementById('toggleRetest').addEventListener('click', () => {
     retestSection.classList.add('show');
@@ -1005,7 +618,6 @@
     recalcAll();
   });
 
-  // ---- Toast ----
   function toast(msg){
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1013,11 +625,10 @@
     setTimeout(() => t.classList.remove('show'), 2200);
   }
 
-  // ---- Record collection ----
   function overallResult(includeRetest){
-    let fail = anyFail(lastCrusher.pass) || anyFail(lastMill.pass);
-    if (includeRetest) fail = fail || anyFail(lastCrusherR.pass) || anyFail(lastMillR.pass);
-    const anyData = lastCrusher.pass.some(v=>v!==null) || lastMill.pass.some(v=>v!==null);
+    let fail = isFail(lastCrusher.pass) || isFail(lastMill.pass);
+    if (includeRetest) fail = fail || isFail(lastCrusherR.pass) || isFail(lastMillR.pass);
+    const anyData = lastCrusher.pass !== null || lastMill.pass !== null;
     if (!anyData) return 'PENDING';
     return fail ? 'FAIL' : 'PASS';
   }
@@ -1047,9 +658,7 @@
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
     catch(e){ return []; }
   }
-  function saveLogArr(arr){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
+  function saveLogArr(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 
   function renderLog(){
     const log = loadLog();
@@ -1061,8 +670,8 @@
     log.slice().reverse().forEach((rec, revIdx) => {
       const idx = log.length - 1 - revIdx;
       const tr = document.createElement('tr');
-      const crusherOverall = anyFail(rec.crusher.pass) ? 'FAIL' : (rec.crusher.pass.some(v=>v!==null) ? 'PASS' : '—');
-      const millOverall = anyFail(rec.mill.pass) ? 'FAIL' : (rec.mill.pass.some(v=>v!==null) ? 'PASS' : '—');
+      const crusherOverall = isFail(rec.crusher.pass) ? 'FAIL' : (rec.crusher.pass !== null ? 'PASS' : '—');
+      const millOverall = isFail(rec.mill.pass) ? 'FAIL' : (rec.mill.pass !== null ? 'PASS' : '—');
       const savedDate = new Date(rec.savedAt);
       tr.innerHTML = `
         <td>${rec.workOrder || '—'}</td>
@@ -1089,11 +698,9 @@
     });
   }
 
-  function fillInputs(prefix, values){
-    values.forEach((v, i) => {
-      const el = document.querySelector(`.${prefix}[data-col="${i}"]`);
-      if (el) el.value = (v === null || v === undefined) ? '' : v;
-    });
+  function fillInput(cls, value){
+    const el = document.querySelector(`.${cls}`);
+    if (el) el.value = (value === null || value === undefined) ? '' : value;
   }
 
   function applyRecordToForm(rec){
@@ -1101,8 +708,8 @@
     document.getElementById('testDate').value = rec.date || '';
     document.getElementById('performedBy').value = rec.performedBy || '';
     document.getElementById('comments').value = rec.comments || '';
-    fillInputs('c-A', rec.crusher.A); fillInputs('c-B', rec.crusher.B); fillInputs('c-C', rec.crusher.C);
-    fillInputs('m-E', rec.mill.E); fillInputs('m-F', rec.mill.F); fillInputs('m-G', rec.mill.G);
+    fillInput('c-A', rec.crusher.A); fillInput('c-B', rec.crusher.B); fillInput('c-C', rec.crusher.C);
+    fillInput('m-E', rec.mill.E); fillInput('m-F', rec.mill.F); fillInput('m-G', rec.mill.G);
     if (rec.hasRetest){
       retestSection.classList.add('show');
       document.getElementById('toggleRetest').style.display = 'none';
@@ -1110,8 +717,8 @@
       document.getElementById('retestBy').value = rec.retestBy || '';
       document.getElementById('turnAdjusted').value = rec.turnAdjusted || '';
       document.getElementById('newCrusherGap').value = rec.newCrusherGap || '';
-      if (rec.crusherR) { fillInputs('rc-A', rec.crusherR.A); fillInputs('rc-B', rec.crusherR.B); fillInputs('rc-C', rec.crusherR.C); }
-      if (rec.millR) { fillInputs('rm-E', rec.millR.E); fillInputs('rm-F', rec.millR.F); fillInputs('rm-G', rec.millR.G); }
+      if (rec.crusherR) { fillInput('rc-A', rec.crusherR.A); fillInput('rc-B', rec.crusherR.B); fillInput('rc-C', rec.crusherR.C); }
+      if (rec.millR) { fillInput('rm-E', rec.millR.E); fillInput('rm-F', rec.millR.F); fillInput('rm-G', rec.millR.G); }
     } else {
       retestSection.classList.remove('show');
       document.getElementById('toggleRetest').style.display = 'inline-block';
@@ -1120,11 +727,9 @@
   }
 
   function updateDraftButtonState(){
-    const has = !!localStorage.getItem(DRAFT_KEY);
-    document.getElementById('loadDraftBtn').disabled = !has;
+    document.getElementById('loadDraftBtn').disabled = !localStorage.getItem(DRAFT_KEY);
   }
 
-  // ---- Save Draft / Load Draft ----
   document.getElementById('saveDraftBtn').addEventListener('click', () => {
     recalcAll();
     const rec = collectRecord();
@@ -1141,7 +746,6 @@
     toast('Draft loaded');
   });
 
-  // ---- Submit (saves to permanent log) ----
   document.getElementById('submitBtn').addEventListener('click', () => {
     recalcAll();
     const rec = collectRecord();
@@ -1157,7 +761,6 @@
     toast('Submitted to log');
   });
 
-  // ---- New / Clear ----
   document.getElementById('newBtn').addEventListener('click', () => {
     if (!confirm('Clear the form for a new test? Unsaved data will be lost.')) return;
     document.querySelectorAll('main input[type=text], main input[type=date], main input[type=number], main textarea').forEach(el => el.value = '');
@@ -1167,7 +770,6 @@
     toast('Form cleared');
   });
 
-  // ---- Load last submitted ----
   document.getElementById('loadLastBtn').addEventListener('click', () => {
     const arr = loadLog();
     if (arr.length === 0){ toast('No submitted entries yet'); return; }
@@ -1175,33 +777,22 @@
     toast('Last submitted entry loaded');
   });
 
-  // ---- CSV export ----
   document.getElementById('exportCsvBtn').addEventListener('click', () => {
     const arr = loadLog();
     if (arr.length === 0){ toast('No submitted entries to export'); return; }
     const headers = [
       'work_order','date','performed_by','comments',
-      'crusher_A_NBLL_A','crusher_A_NBLL_B','crusher_A_MACF_A','crusher_A_MACF_B',
-      'crusher_B_NBLL_A','crusher_B_NBLL_B','crusher_B_MACF_A','crusher_B_MACF_B',
-      'crusher_C_NBLL_A','crusher_C_NBLL_B','crusher_C_MACF_A','crusher_C_MACF_B',
-      'crusher_D_NBLL_A','crusher_D_NBLL_B','crusher_D_MACF_A','crusher_D_MACF_B',
-      'crusher_passrate_NBLL_A','crusher_passrate_NBLL_B','crusher_passrate_MACF_A','crusher_passrate_MACF_B',
-      'mill_E_NBLL_A','mill_E_NBLL_B','mill_E_MACF_A','mill_E_MACF_B',
-      'mill_F_NBLL_A','mill_F_NBLL_B','mill_F_MACF_A','mill_F_MACF_B',
-      'mill_G_NBLL_A','mill_G_NBLL_B','mill_G_MACF_A','mill_G_MACF_B',
-      'mill_H_NBLL_A','mill_H_NBLL_B','mill_H_MACF_A','mill_H_MACF_B',
-      'mill_passrate_NBLL_A','mill_passrate_NBLL_B','mill_passrate_MACF_A','mill_passrate_MACF_B',
+      'crusher_A','crusher_B','crusher_C','crusher_D','crusher_passrate',
+      'mill_E','mill_F','mill_G','mill_H','mill_passrate',
       'has_retest','turn_adjusted','new_crusher_gap_mm','overall_result','saved_at'
     ];
-    const rows = arr.map(rec => {
-      const g = arr2 => arr2.map(v => v===null||v===undefined ? '' : v);
-      return [
-        rec.workOrder, rec.date, rec.performedBy, (rec.comments||'').replace(/[\r\n]+/g,' '),
-        ...g(rec.crusher.A), ...g(rec.crusher.B), ...g(rec.crusher.C), ...g(rec.crusher.D), ...g(rec.crusher.pass),
-        ...g(rec.mill.E), ...g(rec.mill.F), ...g(rec.mill.G), ...g(rec.mill.H), ...g(rec.mill.pass),
-        rec.hasRetest ? 'yes' : 'no', (rec.turnAdjusted ?? ''), (rec.newCrusherGap ?? ''), rec.overall, rec.savedAt
-      ];
-    });
+    const nz = v => (v===null||v===undefined) ? '' : v;
+    const rows = arr.map(rec => [
+      rec.workOrder, rec.date, rec.performedBy, (rec.comments||'').replace(/[\r\n]+/g,' '),
+      nz(rec.crusher.A), nz(rec.crusher.B), nz(rec.crusher.C), nz(rec.crusher.D), nz(rec.crusher.pass),
+      nz(rec.mill.E), nz(rec.mill.F), nz(rec.mill.G), nz(rec.mill.H), nz(rec.mill.pass),
+      rec.hasRetest ? 'yes' : 'no', nz(rec.turnAdjusted), nz(rec.newCrusherGap), rec.overall, rec.savedAt
+    ]);
     const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
@@ -1215,7 +806,6 @@
     toast('CSV exported');
   });
 
-  // init
   recalcAll();
   renderLog();
   updateDraftButtonState();
