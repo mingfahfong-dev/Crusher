@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Crusher &amp; Mill Test Sheet — v7</title>
+<title>Crusher &amp; Mill Test Sheet — v8</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23111111'/%3E%3Cpath d='M14 20 L32 12 L50 20 L44 44 L20 44 Z' fill='none' stroke='%23e07a2b' stroke-width='3'/%3E%3Cpath d='M22 30 L42 30 M25 37 L39 37' stroke='%23e07a2b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -251,7 +251,7 @@
       <h1>Crusher <span>&amp;</span> Mill Test Sheet</h1>
       <div class="subtitle">PMLB — Sample sizing verification (2mm crush / 100µm mill)</div>
     </div>
-    <div class="version-tag">v7</div>
+    <div class="version-tag">v8</div>
   </div>
 </header>
 
@@ -514,7 +514,7 @@
 </main>
 
 <footer>
-  Crusher &amp; Mill Test Sheet Tool <span class="v">v7</span> — PMLB internal tool. Data is stored locally in this browser only.
+  Crusher &amp; Mill Test Sheet Tool <span class="v">v8</span> — PMLB internal tool. Data is stored locally in this browser only.
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -607,6 +607,22 @@
     });
   });
 
+  // ---- Print / Save PDF: browsers use the page title as the default PDF filename,
+  // so set it to crusher_mill_test_sheet_<workorder>_<date> while printing ----
+  let originalTitle = document.title;
+  function pdfFileTitle(){
+    const clean = s => String(s || '').trim().replace(/[\\/:*?"<>|\s]+/g, '-').replace(/^-+|-+$/g, '');
+    const wo = clean(document.getElementById('workOrder').value);
+    const date = document.getElementById('testDate').value || todayStr();
+    return ['crusher_mill_test_sheet', wo, date].filter(Boolean).join('_');
+  }
+  window.addEventListener('beforeprint', () => {
+    originalTitle = document.title;
+    document.title = pdfFileTitle();
+  });
+  window.addEventListener('afterprint', () => {
+    document.title = originalTitle;
+  });
   document.getElementById('printBtn').addEventListener('click', () => window.print());
 
   const retestSection = document.getElementById('retestSection');
