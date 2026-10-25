@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  CRUSHER & MILL TEST SHEET TOOL — PMLB (Port Hedland Mining Laboratory)
+  Purpose : digital version of Crusher_Mill_test_sheet_with_calculations.xlsx. One NBLL sample is crushed to 2mm
+            and milled to 100um; passing % is calculated and PASS/FAIL set at 95%. Optional retest after a crusher
+            adjustment (turns adjusted + new gap). Results are kept in a local log, exportable as CSV/JSON.
+  Context : single self-contained HTML file, no server, no dependencies. Data lives in the browser's localStorage.
+            See the "About / Changelog" section at the bottom of the page for formulas, data format and version history.
+  Version : v9
+-->
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Crusher &amp; Mill Test Sheet — v8</title>
+<title>Crusher &amp; Mill Test Sheet — v9</title>
+<script>try{var __t=localStorage.getItem('pmlb_crusher_mill_theme');if(__t==='light'||__t==='dark')document.documentElement.setAttribute('data-theme',__t);}catch(e){}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23111111'/%3E%3Cpath d='M14 20 L32 12 L50 20 L44 44 L20 44 Z' fill='none' stroke='%23e07a2b' stroke-width='3'/%3E%3Cpath d='M22 30 L42 30 M25 37 L39 37' stroke='%23e07a2b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root{
@@ -18,7 +28,7 @@
     --pass:#4a9b6e;
     --fail:#c1503f;
     --input-bg:#0f0f11;
-    --font-ui: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     --font-data: "Consolas", "SF Mono", Menlo, monospace;
   }
   *{box-sizing:border-box;}
@@ -79,7 +89,7 @@
     color:var(--text-dim);
     margin-bottom:4px;
   }
-  input[type=text], input[type=date], input[type=number], textarea{
+  input[type=text], input[type=email], input[type=date], input[type=number], textarea{
     width:100%;
     background:var(--input-bg);
     border:1px solid var(--line);
@@ -210,8 +220,68 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+
+  /* ---- Theme: dark is default, light via toggle ---- */
+  :root{color-scheme:dark;}
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#f5f5f7; --bg-panel:#ffffff; --bg-panel-2:#f0f0f3; --line:#d8d8de;
+    --text:#1d1d1f; --text-dim:#6e6e73; --orange:#d9660f; --orange-dim:#d9a36f;
+    --pass:#2e8b57; --fail:#c0392b; --input-bg:#ffffff;
+  }
+  .header-right{display:flex; align-items:center; gap:8px;}
+  .theme-btn{padding:4px 10px; font-size:1rem; line-height:1.2;}
+
+  /* ---- Apple-style refinements ---- */
+  section.block, .meta-grid{border-radius:14px;}
+  button{border-radius:10px;}
+  input[type=text], input[type=email], input[type=date], input[type=number], textarea{border-radius:8px;}
+  .badge{border-radius:6px;}
+
+  /* ---- Performed By: several names ---- */
+  .name-list{display:flex; flex-direction:column; gap:6px;}
+  .name-row{display:flex; gap:6px;}
+  .name-row input{flex:1; min-width:0;}
+  .name-remove{padding:0 11px; font-size:1.05rem; line-height:1;}
+  .name-row:only-child .name-remove{display:none;}
+  .name-add{margin-top:6px; padding:6px 10px; font-size:0.75rem;}
+
+  /* ---- Email draft sheet ---- */
+  .sheet-backdrop{
+    display:none; position:fixed; inset:0; z-index:100;
+    background:rgba(0,0,0,0.5);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    align-items:flex-end; justify-content:center;
+  }
+  .sheet-backdrop.show{display:flex;}
+  .sheet{
+    background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:18px 18px 0 0; width:100%; max-width:480px;
+    padding:20px 18px 24px; max-height:92vh; overflow-y:auto;
+  }
+  .sheet h3{margin:0 0 6px; font-size:1.05rem;}
+  .sheet-note{margin:0 0 14px; color:var(--text-dim); font-size:0.8rem;}
+  .sheet .field{margin-bottom:12px;}
+  .sheet-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; margin-top:6px;}
+  .sheet-step{color:var(--text-dim); font-size:0.75rem; margin:8px 0 0; text-align:right;}
+  @media (min-width:601px){
+    .sheet-backdrop{align-items:center;}
+    .sheet{border-radius:18px;}
+  }
+
+  /* ---- About / changelog ---- */
+  #aboutSection summary{cursor:pointer; padding:12px 16px; font-weight:600; font-size:0.9rem; list-style:none;}
+  #aboutSection summary::-webkit-details-marker{display:none;}
+  #aboutSection summary::after{content:"＋"; float:right; color:var(--orange);}
+  #aboutSection details[open] summary::after{content:"－";}
+  .about-body{padding:2px 18px 16px; font-size:0.82rem; color:var(--text-dim);}
+  .about-body h3{color:var(--text); font-size:0.85rem; margin:14px 0 4px;}
+  .about-body p, .about-body li{margin:3px 0;}
+  .about-body ul{padding-left:18px; margin:4px 0;}
+  .about-body code{font-family:var(--font-data); font-size:0.78rem; color:var(--text);}
+
   @media (max-width:600px){
-    input[type=text], input[type=date], input[type=number], textarea{ font-size:16px; }
+    input[type=text], input[type=email], input[type=date], input[type=number], textarea{ font-size:16px; }
     button{padding:12px 14px; font-size:0.92rem;}
     main{padding:14px 12px 0;}
     header{padding:14px 14px 12px;}
@@ -238,7 +308,8 @@
     .badge.fail{background:#fff; color:#000; border:2px solid #000; font-weight:700;}
     .badge.pending{border:1px solid #999; color:#333;}
     .escalate-hint{color:#000; font-weight:700;}
-    .actions-row, .today-btn, .close-retest, #logSection, footer, .toast { display:none !important; }
+    .actions-row, .today-btn, .close-retest, #logSection, #aboutSection, footer, .toast, .theme-btn, .name-add, .name-remove, .sheet-backdrop { display:none !important; }
+    .field label{color:#333;}
     main{max-width:100%; padding:0;}
   }
 </style>
@@ -251,7 +322,10 @@
       <h1>Crusher <span>&amp;</span> Mill Test Sheet</h1>
       <div class="subtitle">PMLB — Sample sizing verification (2mm crush / 100µm mill)</div>
     </div>
-    <div class="version-tag">v8</div>
+    <div class="header-right">
+      <button type="button" class="ghost theme-btn" id="themeBtn" aria-label="Switch to light mode">☀︎</button>
+      <div class="version-tag">v9</div>
+    </div>
   </div>
 </header>
 
@@ -271,7 +345,8 @@
     </div>
     <div class="field">
       <label for="performedBy">Performed By</label>
-      <input type="text" id="performedBy" placeholder="Name">
+      <div class="name-list" id="performedByList"></div>
+      <button type="button" class="ghost name-add" id="addPerformedBy">+ Add person</button>
     </div>
     <div class="field" style="display:flex;align-items:flex-end;">
       <span style="color:var(--text-dim);font-size:0.78rem;">Complete and scan into SAP Notification</span>
@@ -386,7 +461,8 @@
         </div>
         <div class="field">
           <label for="retestBy">Performed By</label>
-          <input type="text" id="retestBy" placeholder="Name">
+          <div class="name-list" id="retestByList"></div>
+          <button type="button" class="ghost name-add" id="addRetestBy">+ Add person</button>
         </div>
         <div class="field">
           <label for="turnAdjusted">Turns Adjusted</label>
@@ -481,6 +557,9 @@
   <div class="actions-row">
     <button class="ghost" id="saveDraftBtn">Save Draft</button>
     <button class="ghost" id="loadDraftBtn" disabled>Load Draft</button>
+    <button class="ghost" id="emailDraftBtn">Email Draft</button>
+    <button class="ghost" id="loadDraftFileBtn">Load Draft from File</button>
+    <input type="file" id="loadDraftFileInput" accept="application/json,.json" style="display:none;">
     <button class="primary" id="submitBtn">Submit</button>
     <button class="ghost" id="newBtn">New / Clear form</button>
     <button class="ghost" id="printBtn">Print / Save PDF</button>
@@ -511,11 +590,71 @@
     </div>
   </section>
 
+  <section class="block" id="aboutSection">
+    <details>
+      <summary>About · Changelog</summary>
+      <div class="about-body">
+        <h3>Purpose &amp; context</h3>
+        <p>Digital version of <code>Crusher_Mill_test_sheet_with_calculations.xlsx</code> used at PMLB (iron ore QC laboratory, Port Hedland). A single NBLL sample is crushed to 2mm and milled to 100µm; the tool calculates the passing rate for each stage and sets PASS/FAIL at 95%. If a stage fails, the crusher is adjusted and a retest is recorded (turns adjusted + new crusher gap). Failures show an escalate-to-Senior-Analyst hint.</p>
+        <h3>Calculations (identical to the Excel sheet)</h3>
+        <ul>
+          <li>Crusher: D = B + C; retention % = B/D×100; passing % = C/D×100. A = starting weight, B = +2mm weight, C = −2mm weight.</li>
+          <li>Mill: H = G − F; retention % = H/E×100; passing % = 100 − retention %. E = starting milled weight, F = tray weight, G = dry weight.</li>
+          <li>PASS when passing % &gt; 95; otherwise FAIL. Overall = FAIL if any stage (including retest) fails.</li>
+        </ul>
+        <h3>Data &amp; storage</h3>
+        <ul>
+          <li>Browser localStorage: submitted log <code>pmlb_crusher_mill_log_v1</code> (array of records), local draft <code>pmlb_crusher_mill_draft_v1</code>, theme <code>pmlb_crusher_mill_theme</code>. Nothing is sent anywhere.</li>
+          <li>Record fields: workOrder, date, performedBy (text), performedByList (array), comments, crusher {A,B,C,D,ret,pass}, mill {E,F,G,H,ret,pass}, hasRetest, retestDate, retestBy, retestByList, turnAdjusted, newCrusherGap, crusherR, millR, overall, savedAt (unique ID used to skip duplicates on import).</li>
+          <li>Draft file (Email Draft): JSON <code>{format:"pmlb-crusher-mill-draft", toolVersion, record}</code>, loaded with “Load Draft from File”.</li>
+          <li>Log moves between machines with Export JSON / Import JSON. Save As dialog is used where the browser supports it (Chrome/Edge), otherwise a normal download.</li>
+          <li>PDF: Print / Save PDF uses the browser print dialog; filename is <code>crusher_mill_test_sheet_&lt;workorder&gt;_&lt;date&gt;</code>.</li>
+        </ul>
+        <h3>Naming &amp; versions</h3>
+        <p>File name <code>crusher_mill_test_sheet_tool_vN.html</code>; version shown in the page title, header and footer and bumped on every revision.</p>
+        <h3>Changelog</h3>
+        <ul>
+          <li><b>v9</b> (2026-10-25) — Several “Performed By” names (add/remove) for the test and retest; Email Draft (share sheet on phones, save file + open email elsewhere) and Load Draft from File; light/dark toggle (dark default) and Apple-style refinements; this About/Changelog section; log text is now escaped when displayed.</li>
+          <li><b>v8</b> (2026-10-04) — PDF filename pre-filled as crusher_mill_test_sheet_&lt;workorder&gt;_&lt;date&gt;.</li>
+          <li><b>v7</b> — Import JSON (merge into log, skip duplicates).</li>
+          <li><b>v6</b> — Load button on every log row; Export JSON; CSV/JSON via Save As; Retest Crusher / Retest Mill columns in the log.</li>
+          <li><b>v5</b> — Single NBLL sample (MACF and NBLL A/B removed); simple label/value tables.</li>
+          <li><b>v4</b> — Phone layout fix; Save Draft / Submit; Print / Save PDF.</li>
+          <li><b>v3</b> — “Pan Product Weight” relabelled “−2mm Product Weight”.</li>
+          <li><b>v2</b> — No number spinners; Today buttons; Turns Adjusted and New Crusher Gap on retest.</li>
+          <li><b>v1</b> — First version built from the Excel sheet: calculations, auto PASS/FAIL, optional retest, local log, CSV export.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
 </main>
 
 <footer>
-  Crusher &amp; Mill Test Sheet Tool <span class="v">v8</span> — PMLB internal tool. Data is stored locally in this browser only.
+  Crusher &amp; Mill Test Sheet Tool <span class="v">v9</span> — PMLB internal tool. Data is stored locally in this browser only.
 </footer>
+
+<div class="sheet-backdrop" id="emailSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="emailSheetTitle">
+    <h3 id="emailSheetTitle">Email draft to a colleague</h3>
+    <p class="sheet-note" id="emailSheetNote">The draft is saved as a small file. Attach it to the email; your colleague opens this tool and uses “Load Draft from File”.</p>
+    <div class="field">
+      <label for="emailTo">Send to</label>
+      <input type="email" id="emailTo" placeholder="name@company.com" inputmode="email" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="emailNote">Note (optional)</label>
+      <textarea id="emailNote" rows="2" placeholder="e.g. Mill test still to do"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button type="button" class="ghost" id="emailCancel">Cancel</button>
+      <button type="button" class="primary" id="emailShareBtn" style="display:none;">Share draft…</button>
+      <button type="button" class="primary" id="emailSaveBtn">1 · Save draft file</button>
+      <button type="button" class="primary" id="emailMailBtn" disabled>2 · Open email</button>
+    </div>
+    <p class="sheet-step" id="emailStepHint">Email apps can’t attach files automatically — attach the saved file to the message that opens.</p>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -523,6 +662,62 @@
 (function(){
   const STORAGE_KEY = 'pmlb_crusher_mill_log_v1';
   const DRAFT_KEY = 'pmlb_crusher_mill_draft_v1';
+  const THEME_KEY = 'pmlb_crusher_mill_theme';
+  const TOOL_VERSION = 'v9';
+
+  function esc(v){
+    return String(v === null || v === undefined ? '' : v)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ---- Performed By: a list of names (one input row per person) ----
+  function makeNameList(listId, addBtnId, firstId){
+    const list = document.getElementById(listId);
+    function reid(){
+      list.querySelectorAll('input').forEach((inp, i) => { if (i === 0) inp.id = firstId; else inp.removeAttribute('id'); });
+    }
+    function addRow(value){
+      const row = document.createElement('div');
+      row.className = 'name-row';
+      const input = document.createElement('input');
+      input.type = 'text'; input.placeholder = 'Name'; input.autocomplete = 'off'; input.value = value || '';
+      const rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'ghost name-remove'; rm.textContent = '×';
+      rm.setAttribute('aria-label', 'Remove person');
+      rm.addEventListener('click', () => { row.remove(); reid(); });
+      row.appendChild(input); row.appendChild(rm);
+      list.appendChild(row);
+      reid();
+      return input;
+    }
+    function get(){
+      return Array.from(list.querySelectorAll('input')).map(i => i.value.trim()).filter(Boolean);
+    }
+    function set(names){
+      list.innerHTML = '';
+      const arr = (names && names.length) ? names : [''];
+      arr.forEach(n => addRow(n));
+    }
+    document.getElementById(addBtnId).addEventListener('click', () => addRow('').focus());
+    set([]);
+    return { get, set };
+  }
+  const performedByNames = makeNameList('performedByList', 'addPerformedBy', 'performedBy');
+  const retestByNames = makeNameList('retestByList', 'addRetestBy', 'retestBy');
+
+  // ---- Light / dark theme (dark default) ----
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = (t === 'dark') ? '☀︎' : '☾';
+    themeBtn.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  themeBtn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch(e){}
+  });
 
   function fmtNum(v, digits){
     if (v === null || v === undefined || isNaN(v)) return '';
@@ -610,12 +805,13 @@
   // ---- Print / Save PDF: browsers use the page title as the default PDF filename,
   // so set it to crusher_mill_test_sheet_<workorder>_<date> while printing ----
   let originalTitle = document.title;
-  function pdfFileTitle(){
+  function nameStem(prefix){
     const clean = s => String(s || '').trim().replace(/[\\/:*?"<>|\s]+/g, '-').replace(/^-+|-+$/g, '');
     const wo = clean(document.getElementById('workOrder').value);
     const date = document.getElementById('testDate').value || todayStr();
-    return ['crusher_mill_test_sheet', wo, date].filter(Boolean).join('_');
+    return [prefix, wo, date].filter(Boolean).join('_');
   }
+  function pdfFileTitle(){ return nameStem('crusher_mill_test_sheet'); }
   window.addEventListener('beforeprint', () => {
     originalTitle = document.title;
     document.title = pdfFileTitle();
@@ -634,6 +830,7 @@
   document.getElementById('closeRetest').addEventListener('click', () => {
     if (!confirm('Remove the retest section? Entered retest values will be cleared.')) return;
     document.querySelectorAll('#retestSection input').forEach(el => el.value = '');
+    retestByNames.set([]);
     retestSection.classList.remove('show');
     document.getElementById('toggleRetest').style.display = 'inline-block';
     recalcAll();
@@ -659,13 +856,15 @@
     return {
       workOrder: document.getElementById('workOrder').value,
       date: document.getElementById('testDate').value,
-      performedBy: document.getElementById('performedBy').value,
+      performedBy: performedByNames.get().join(', '),
+      performedByList: performedByNames.get(),
       comments: document.getElementById('comments').value,
       crusher: lastCrusher,
       mill: lastMill,
       hasRetest: retestOpen,
       retestDate: document.getElementById('retestDate').value,
-      retestBy: document.getElementById('retestBy').value,
+      retestBy: retestByNames.get().join(', '),
+      retestByList: retestByNames.get(),
       turnAdjusted: document.getElementById('turnAdjusted').value,
       newCrusherGap: document.getElementById('newCrusherGap').value,
       crusherR: retestOpen ? lastCrusherR : null,
@@ -701,15 +900,15 @@
         : '—';
       const savedDate = new Date(rec.savedAt);
       tr.innerHTML = `
-        <td>${rec.workOrder || '—'}</td>
-        <td>${rec.date || '—'}</td>
-        <td>${rec.performedBy || '—'}</td>
+        <td>${esc(rec.workOrder) || '—'}</td>
+        <td>${esc(rec.date) || '—'}</td>
+        <td>${esc(rec.performedBy) || '—'}</td>
         <td>${crusherOverall}</td>
         <td>${millOverall}</td>
         <td>${rec.hasRetest ? 'Yes' : 'No'}</td>
         <td>${retestCrusherOverall}</td>
         <td>${retestMillOverall}</td>
-        <td><span class="badge ${rec.overall==='PASS'?'pass':(rec.overall==='FAIL'?'fail':'pending')}">${rec.overall}</span></td>
+        <td><span class="badge ${rec.overall==='PASS'?'pass':(rec.overall==='FAIL'?'fail':'pending')}">${esc(rec.overall)}</span></td>
         <td>${savedDate.toLocaleDateString()} ${savedDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</td>
         <td style="white-space:nowrap;">
           <button class="ghost" style="padding:3px 8px;font-size:0.72rem;" data-load="${idx}">Load</button>
@@ -748,7 +947,7 @@
   function applyRecordToForm(rec){
     document.getElementById('workOrder').value = rec.workOrder || '';
     document.getElementById('testDate').value = rec.date || '';
-    document.getElementById('performedBy').value = rec.performedBy || '';
+    performedByNames.set(rec.performedByList || (rec.performedBy ? [rec.performedBy] : []));
     document.getElementById('comments').value = rec.comments || '';
     fillInput('c-A', rec.crusher.A); fillInput('c-B', rec.crusher.B); fillInput('c-C', rec.crusher.C);
     fillInput('m-E', rec.mill.E); fillInput('m-F', rec.mill.F); fillInput('m-G', rec.mill.G);
@@ -756,7 +955,7 @@
       retestSection.classList.add('show');
       document.getElementById('toggleRetest').style.display = 'none';
       document.getElementById('retestDate').value = rec.retestDate || '';
-      document.getElementById('retestBy').value = rec.retestBy || '';
+      retestByNames.set(rec.retestByList || (rec.retestBy ? [rec.retestBy] : []));
       document.getElementById('turnAdjusted').value = rec.turnAdjusted || '';
       document.getElementById('newCrusherGap').value = rec.newCrusherGap || '';
       if (rec.crusherR) { fillInput('rc-A', rec.crusherR.A); fillInput('rc-B', rec.crusherR.B); fillInput('rc-C', rec.crusherR.C); }
@@ -764,6 +963,7 @@
     } else {
       retestSection.classList.remove('show');
       document.getElementById('toggleRetest').style.display = 'inline-block';
+      retestByNames.set([]);
     }
     recalcAll();
   }
@@ -806,6 +1006,8 @@
   document.getElementById('newBtn').addEventListener('click', () => {
     if (!confirm('Clear the form for a new test? Unsaved data will be lost.')) return;
     document.querySelectorAll('main input[type=text], main input[type=date], main input[type=number], main textarea').forEach(el => el.value = '');
+    performedByNames.set([]);
+    retestByNames.set([]);
     retestSection.classList.remove('show');
     document.getElementById('toggleRetest').style.display = 'inline-block';
     recalcAll();
@@ -872,6 +1074,114 @@
     const name = `crusher_mill_test_log_${new Date().toISOString().slice(0,10)}.csv`;
     const ok = await saveFile(name, csv, 'text/csv', 'CSV file', ['.csv']);
     if (ok) toast('CSV exported');
+  });
+
+  // ---- Draft file: email a draft so someone else can load it and finish the test ----
+  function formHasData(){
+    if (document.getElementById('workOrder').value) return true;
+    return ['c-A','c-B','c-C','m-E','m-F','m-G'].some(c => (document.querySelector('.' + c) || {}).value);
+  }
+  function buildDraftPackage(){
+    recalcAll();
+    const rec = collectRecord();
+    rec.isDraft = true;
+    const payload = { format: 'pmlb-crusher-mill-draft', toolVersion: TOOL_VERSION, record: rec };
+    const note = document.getElementById('emailNote').value.trim();
+    const subject = 'Crusher & Mill test draft' + (rec.workOrder ? ' – ' + rec.workOrder : '');
+    const body = [
+      'Hi,', '',
+      note || 'Please complete this crusher & mill test draft.', '',
+      'Work order: ' + (rec.workOrder || '—'),
+      'Date: ' + (rec.date || '—'),
+      'Started by: ' + (rec.performedBy || '—'), '',
+      'To continue: save the attached draft file, open the Crusher & Mill Test Sheet tool, click "Load Draft from File" and pick it. Add your name under Performed By, finish the test, then Submit.'
+    ].join('\n');
+    return {
+      json: JSON.stringify(payload, null, 2),
+      fname: nameStem('crusher_mill_draft') + '.json',
+      subject, body,
+      to: document.getElementById('emailTo').value.trim().replace(/\s+/g, '')
+    };
+  }
+  function canShareFiles(){
+    try {
+      const f = new File(['{}'], 'draft.json', { type: 'application/json' });
+      return !!(navigator.canShare && navigator.share && navigator.canShare({ files: [f] }));
+    } catch(e){ return false; }
+  }
+  const emailSheet = document.getElementById('emailSheet');
+  const emailSaveBtn = document.getElementById('emailSaveBtn');
+  const emailMailBtn = document.getElementById('emailMailBtn');
+  const emailShareBtn = document.getElementById('emailShareBtn');
+  function closeEmailSheet(){ emailSheet.classList.remove('show'); }
+  document.getElementById('emailDraftBtn').addEventListener('click', () => {
+    const share = canShareFiles();
+    emailShareBtn.style.display = share ? '' : 'none';
+    emailSaveBtn.style.display = share ? 'none' : '';
+    emailMailBtn.style.display = share ? 'none' : '';
+    emailSaveBtn.textContent = '1 · Save draft file';
+    emailMailBtn.disabled = true;
+    document.getElementById('emailStepHint').textContent = share
+      ? 'Choose Mail (or another app) in the share sheet; the draft file is attached.'
+      : 'Email apps can’t attach files automatically — attach the saved file to the message that opens.';
+    emailSheet.classList.add('show');
+  });
+  document.getElementById('emailCancel').addEventListener('click', closeEmailSheet);
+  emailSheet.addEventListener('click', e => { if (e.target === emailSheet) closeEmailSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmailSheet(); });
+
+  emailShareBtn.addEventListener('click', async () => {
+    const pkg = buildDraftPackage();
+    try {
+      const file = new File([pkg.json], pkg.fname, { type: 'application/json' });
+      await navigator.share({ files: [file], title: pkg.subject, text: pkg.body });
+      closeEmailSheet();
+      toast('Draft shared');
+    } catch(err){
+      if (err && err.name === 'AbortError') return;
+      toast('Sharing failed — try again');
+    }
+  });
+  emailSaveBtn.addEventListener('click', async () => {
+    const pkg = buildDraftPackage();
+    const ok = await saveFile(pkg.fname, pkg.json, 'application/json', 'Draft file', ['.json']);
+    if (!ok) return;
+    emailSaveBtn.textContent = '✓ Draft file saved';
+    emailMailBtn.disabled = false;
+    toast('Draft file saved — now open the email');
+  });
+  emailMailBtn.addEventListener('click', () => {
+    const pkg = buildDraftPackage();
+    const a = document.createElement('a');
+    a.href = 'mailto:' + pkg.to + '?subject=' + encodeURIComponent(pkg.subject) + '&body=' + encodeURIComponent(pkg.body);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    closeEmailSheet();
+  });
+
+  document.getElementById('loadDraftFileBtn').addEventListener('click', () => {
+    document.getElementById('loadDraftFileInput').click();
+  });
+  document.getElementById('loadDraftFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    let parsed;
+    try { parsed = JSON.parse(await file.text()); }
+    catch(err){ toast('Could not read that file — not a valid draft'); return; }
+    if (Array.isArray(parsed)){
+      toast('That is a log export — use Import JSON in the Saved Test Log');
+      return;
+    }
+    const rec = parsed && parsed.record ? parsed.record : parsed;
+    if (!rec || typeof rec !== 'object' || !rec.crusher || !rec.mill){
+      toast('That file is not a crusher & mill draft');
+      return;
+    }
+    if (formHasData() && !confirm('Loading this draft replaces what is currently in the form. Continue?')) return;
+    applyRecordToForm(rec);
+    toast('Draft loaded from file');
   });
 
   document.getElementById('importJsonBtn').addEventListener('click', () => {
